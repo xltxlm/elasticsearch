@@ -1,0 +1,1 @@
+docker logs docker_elasticsearch_1

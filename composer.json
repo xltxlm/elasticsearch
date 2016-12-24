@@ -1,0 +1,34 @@
+{
+  "name": "xltxlm/elasticsearch",
+  "description": "项目介绍",
+  "authors": [
+    {
+      "name": "xltxlm",
+      "email": "xltxlm@qq.com"
+    }
+  ],
+  "require": {
+    "php": ">=7.0",
+    "xltxlm/logger": "*",
+    "xltxlm/helper": "*",
+    "xltxlm/orm": "*",
+    "elasticsearch/elasticsearch": "~v5."
+  },
+  "require-dev": {
+    "xltxlm/scrutinizer": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "xltxlm\\elasticsearch\\": [
+        "src/"
+      ]
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "xltxlm\\elasticsearch\\": [
+        "./"
+      ]
+    }
+  }
+}

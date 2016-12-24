@@ -1,0 +1,17 @@
+version: '2'
+services:
+  elasticsearch:
+    image: runelasticsearch
+    volumes:
+      - ./elasticsearch/:/elasticsearch/
+    networks:
+      comm:
+        aliases:
+          - elasticsearch1
+    ports:
+        - "9200:9200"
+
+    restart: always
+
+networks:
+    comm:
