@@ -72,11 +72,8 @@ class InsertAndDeleteTest extends \PHPUnit_Framework_TestCase
             ->setId($this->id)
             ->setBodyClass(VideoDemoBody::class)
             ->__invoke();
+        echo "<pre>-->";print_r($data);echo "<--@in ".__FILE__." on line ".__LINE__."\n";
         $this->assertInstanceOf(VideoDemoBody::class, $data);
-    }
-
-    public function testSearch()
-    {
     }
 
 }

@@ -4,6 +4,7 @@ services:
     image: runelasticsearch
     volumes:
       - ./elasticsearch/:/elasticsearch/
+      - ../../:/opt/
     networks:
       comm:
         aliases:

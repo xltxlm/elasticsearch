@@ -22,8 +22,30 @@ class ElasticsearchSearch extends Elasticsearch
     protected $OrderByDesc = [];
     /** @var array 正向排列的字段名称 */
     protected $OrderByAsc = [];
+    /** @var bool 是否精准查询 */
+    protected $term = false;
     /** @var PageObject */
     protected $pageObject;
+
+    /**
+     * @return bool
+     */
+    public function isTerm(): bool
+    {
+        return $this->term;
+    }
+
+    /**
+     * @param bool $term
+     *
+     * @return ElasticsearchSearch
+     */
+    public function setTerm(bool $term): ElasticsearchSearch
+    {
+        $this->term = $term;
+
+        return $this;
+    }
 
     /**
      * @return PageObject
@@ -121,16 +143,25 @@ class ElasticsearchSearch extends Elasticsearch
                 $data = call_user_func([$this->getBodyObject(), $method->name]);
                 if (!empty($data)) {
                     $name = lcfirst(substr($method->name, 3));
-                    $searchs[] = ['match' => [$name => $data]];
+                    //精准搜索
+                    if ($this->isTerm()) {
+                        $searchs[] = ["term" => [$name => $data]];
+                    } else {
+                        $searchs[] = ['multi_match' => [
+                            'query' => $data,
+                            'type' => 'phrase',
+                            'fields' => [$name],
+                        ]];
+                    }
                 }
             }
         }
         $OrderByDescAscs = [];
         foreach ($this->getOrderByDesc() as $item) {
-            $OrderByDescAscs[] = [$item.'.keyword' => ['order' => 'desc']];
+            $OrderByDescAscs[] = [$item => ['order' => 'desc']];
         }
         foreach ($this->getOrderByAsc() as $item) {
-            $OrderByDescAscs[] = [$item.'.keyword' => ['order' => 'asc']];
+            $OrderByDescAscs[] = [$item => ['order' => 'asc']];
         }
         $index = $this->getElasticsearchConfig()->__invoke() +
             [
@@ -147,11 +178,10 @@ class ElasticsearchSearch extends Elasticsearch
         if (isset($this->pageObject)) {
             $index += [
                 'from' => $this->getPageObject()->getFrom(),
-                'size' => $this->getPageObject()->getPrepage()
+                'size' => $this->getPageObject()->getPrepage(),
             ];
         }
         $client = ClientBuilder::create()->build();
-
         $response = $client->search($index);
         $BodyObjects = [];
         foreach ($response['hits']['hits'] as $hit) {

@@ -41,6 +41,16 @@ class SearchTest extends TestCase
             ->setId($i++)
             ->setTitle("南京 ".__LINE__);
 
+        $VideoDemoBody7 = (new VideoDemoBody())
+            ->setId("1333")
+            ->setTitle("南京 ".__LINE__);
+        $VideoDemoBody8 = (new VideoDemoBody())
+            ->setId("1330")
+            ->setTitle("南京 ".__LINE__);
+        $VideoDemoBody9 = (new VideoDemoBody())
+            ->setId("1331")
+            ->setTitle("南京");
+
         $ElasticsearchInsert = (new ElasticsearchInsert())
             ->setElasticsearchConfig(new VideoBaseConfig());
 
@@ -68,6 +78,56 @@ class SearchTest extends TestCase
             ->setId($VideoDemoBody6->getId())
             ->setBody($VideoDemoBody6)
             ->__invoke();
+        $ElasticsearchInsert
+            ->setId(133)
+            ->setBody($VideoDemoBody7)
+            ->__invoke();
+        $ElasticsearchInsert
+            ->setId(134)
+            ->setBody($VideoDemoBody8)
+            ->__invoke();
+        $ElasticsearchInsert
+            ->setId(135)
+            ->setBody($VideoDemoBody9)
+            ->__invoke();
+    }
+
+    /**
+     * 只搜索一个字段,名字是精确匹配的,并且可以排序
+     */
+    public function testSearchOneJQAndOrderAsc()
+    {
+        //检索结果应该是1个结果
+        $searchVideoDemoBody = (new VideoDemoBody())
+            ->setId(13);
+
+        /** @var VideoDemoBody[] $ElasticsearchSearch */
+        $ElasticsearchSearch = (new ElasticsearchSearch())
+            ->setElasticsearchConfig(new VideoBaseConfig())
+            ->setBodyObject($searchVideoDemoBody)
+            ->setTerm(true)
+            ->setOrderByAsc($searchVideoDemoBody->varName($searchVideoDemoBody->getId()))
+            ->__invoke();
+        //1:返回结果不是空的
+        $this->assertEquals(1, count($ElasticsearchSearch));
+    }
+
+    /**
+     * 只搜索一个字段,名字是模糊匹配的,并且可以排序
+     */
+    public function testSearchOneblur()
+    {
+        //检索结果应该是4个结果, 按照id进行倒序排列
+        $searchVideoDemoBody = (new VideoDemoBody())
+            ->setTitle("南");
+
+        /** @var VideoDemoBody[] $ElasticsearchSearch */
+        $ElasticsearchSearch = (new ElasticsearchSearch())
+            ->setElasticsearchConfig(new VideoBaseConfig())
+            ->setBodyObject($searchVideoDemoBody)
+            ->__invoke();
+        //1:返回结果不是空的
+        $this->assertGreaterThan(1, count($ElasticsearchSearch));
     }
 
     /**
@@ -160,6 +220,20 @@ class SearchTest extends TestCase
         //1:返回结果不是空的
         $this->assertEquals(1, count($ElasticsearchSearch2));
         $this->assertGreaterThan($ElasticsearchSearch1[0]->getId(), $ElasticsearchSearch2[0]->getId());
+
+        //分页超出范围
+        $pageObject = (new PageObject())
+            ->setPageID(300)
+            ->setPrepage(1);
+
+        /** @var VideoDemoBody[] $ElasticsearchSearch2 */
+        $ElasticsearchSearch3 = (new ElasticsearchSearch())
+            ->setElasticsearchConfig(new VideoBaseConfig())
+            ->setBodyObject($searchVideoDemoBody)
+            ->setOrderByAsc($searchVideoDemoBody->varName($searchVideoDemoBody->getId()))
+            ->setPageObject($pageObject)
+            ->__invoke();
+        $this->assertEmpty($ElasticsearchSearch3);
     }
 
     /**
