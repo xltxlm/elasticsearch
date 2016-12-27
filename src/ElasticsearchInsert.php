@@ -52,7 +52,7 @@ final class ElasticsearchInsert extends Elasticsearch
                 'body' => $this->getBody()->__toArray()
             ];
         $client = ClientBuilder::create()->build();
-        $response = $client->index($index);
+        $client->index($index);
         return true;
     }
 }
