@@ -8,8 +8,7 @@
 
 namespace xltxlm\elasticsearch;
 
-use Elasticsearch\ClientBuilder;
-use xltxlm\orm\PageObject;
+use xltxlm\page\PageObject;
 
 /**
  * 完全自定义查询

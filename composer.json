@@ -11,7 +11,7 @@
     "php": ">=7.0",
     "xltxlm/logger": "*",
     "xltxlm/helper": "*",
-    "xltxlm/orm": "*",
+    "xltxlm/page": "*",
     "elasticsearch/elasticsearch": "~v5."
   },
   "require-dev": {
