@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 #查看索引列表
+curl localhost:9200/_cat/nodes?v
 curl localhost:9200/_cat/indices?v
 #删除掉指定的索引
 curl -XDELETE http://localhost:9200/test | jshon

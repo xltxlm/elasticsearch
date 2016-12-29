@@ -8,6 +8,7 @@
 
 namespace xltxlm\elasticsearch;
 
+use Elasticsearch\ClientBuilder;
 use xltxlm\page\PageObject;
 
 /**
@@ -16,15 +17,34 @@ use xltxlm\page\PageObject;
  */
 class ElasticsearchQuery extends Elasticsearch
 {
-    /** @var mixed 返回结果的模型类 */
-    protected $bodyObject;
+    /** @var string 返回结果的模型类 */
+    protected $bodyString;
+    /** @var string 返回的对象类型 */
+    protected $className = "";
     /** @var array 倒序排列的字段名称 */
     protected $OrderByDesc = [];
     /** @var array 正向排列的字段名称 */
     protected $OrderByAsc = [];
-
     /** @var PageObject 分页 */
     protected $pageObject;
+
+    /**
+     * @return string
+     */
+    public function getClassName(): string
+    {
+        return $this->className;
+    }
+
+    /**
+     * @param string $className
+     * @return ElasticsearchQuery
+     */
+    public function setClassName(string $className): ElasticsearchQuery
+    {
+        $this->className = $className;
+        return $this;
+    }
 
     /**
      * @return PageObject
@@ -47,21 +67,21 @@ class ElasticsearchQuery extends Elasticsearch
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getBodyObject()
+    public function getBodyString()
     {
-        return $this->bodyObject;
+        return $this->bodyString;
     }
 
     /**
-     * @param mixed $bodyObject
+     * @param string $bodyString
      *
      * @return ElasticsearchQuery
      */
-    public function setBodyObject($bodyObject)
+    public function setBodyString($bodyString)
     {
-        $this->bodyObject = $bodyObject;
+        $this->bodyString = $bodyString;
 
         return $this;
     }
@@ -110,7 +130,7 @@ class ElasticsearchQuery extends Elasticsearch
     {
         $index = $this->getElasticsearchConfig()->__invoke() +
             [
-                'body' => [],
+                'body' => $this->getBodyString(),
             ];
 
         //分页
@@ -123,11 +143,11 @@ class ElasticsearchQuery extends Elasticsearch
         $response = $this->getClient()->search($index);
         $BodyObjects = [];
         foreach ($response['hits']['hits'] as $hit) {
-            $BodyObjects[] = (new \ReflectionClass($this->getBodyObject()))
+            $BodyObjects[] = (new \ReflectionClass($this->getClassName()))
                 ->newInstance($hit['_source']);
         }
-        $this->pageObject->setTotal($response['hits']['total']);
-
+        $this->pageObject->setTotal($response['hits']['total'])
+            ->__invoke();
         return $BodyObjects;
     }
 }
