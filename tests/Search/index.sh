@@ -10,6 +10,12 @@ curl -XPUT http://localhost:9200/test
 #创建表,并且指定字段类型
 curl -XPUT localhost:9200/test/_mapping/jd -d'
 {
+    "_all": {
+            "analyzer": "ik_max_word",
+            "search_analyzer": "ik_max_word",
+            "term_vector": "no",
+            "store": "false"
+    },
     "properties" : {
          "id": {
                 "type": "long"

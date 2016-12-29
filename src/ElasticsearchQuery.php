@@ -40,7 +40,7 @@ class ElasticsearchQuery extends Elasticsearch
      *
      * @return ElasticsearchQuery
      */
-    public function setPageObject(PageObject $pageObject): ElasticsearchQuery
+    public function setPageObject(PageObject &$pageObject): ElasticsearchQuery
     {
         $this->pageObject = $pageObject;
 
@@ -128,6 +128,7 @@ class ElasticsearchQuery extends Elasticsearch
             $BodyObjects[] = (new \ReflectionClass($this->getBodyObject()))
                 ->newInstance($hit['_source']);
         }
+        $this->pageObject->setTotal($response['hits']['total']);
 
         return $BodyObjects;
     }

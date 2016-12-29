@@ -3,7 +3,7 @@
 #写入数据
 curl -XPOST http://localhost:9200/test/jd/1 -d'
 {
-    "id":1,
+    "id":"6208554939514357761",
     "cateid":101,
     "tag":"手机",
     "addtime":"2016-12-21 17:20:01",
