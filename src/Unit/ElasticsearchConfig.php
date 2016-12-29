@@ -28,6 +28,26 @@ abstract class ElasticsearchConfig
     protected $timeout = 1;
 
     /**
+     * @return int
+     */
+    public function getPort(): int
+    {
+        return $this->port;
+    }
+
+    /**
+     * @param int $port
+     *
+     * @return ElasticsearchConfig
+     */
+    public function setPort(int $port): ElasticsearchConfig
+    {
+        $this->port = $port;
+
+        return $this;
+    }
+
+    /**
      * @return string
      */
     public function getHost(): string

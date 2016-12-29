@@ -51,8 +51,7 @@ final class ElasticsearchInsert extends Elasticsearch
                 'id' => $this->getId(),
                 'body' => $this->getBody()->__toArray()
             ];
-        $client = ClientBuilder::create()->build();
-        $client->index($index);
+        $this->getClient()->index($index);
         return true;
     }
 }

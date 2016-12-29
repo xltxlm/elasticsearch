@@ -121,8 +121,7 @@ class ElasticsearchQuery extends Elasticsearch
                 'size' => $this->getPageObject()->getPrepage(),
             ];
         }
-        $client = ClientBuilder::create()->build();
-        $response = $client->search($index);
+        $response = $this->getClient()->search($index);
         $BodyObjects = [];
         foreach ($response['hits']['hits'] as $hit) {
             $BodyObjects[] = (new \ReflectionClass($this->getBodyObject()))

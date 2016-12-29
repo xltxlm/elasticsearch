@@ -25,8 +25,7 @@ final class ElasticsearchDelete extends Elasticsearch
                 [
                     'id' => $this->getId(),
                 ];
-            $client = ClientBuilder::create()->build();
-            $client->delete($index);
+            $this->getClient()->delete($index);
         } catch (\Exception $e) {
         }
     }

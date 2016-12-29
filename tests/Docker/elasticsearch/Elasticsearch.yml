@@ -15,14 +15,13 @@
 # Use a descriptive name for your cluster:
 #
 #cluster.name: my-application
-cluster.name: run_elasticsearch
+#cluster.name: run_elasticsearch
 #
 # ------------------------------------ Node ------------------------------------
 #
 # Use a descriptive name for the node:
 #
 #node.name: node-1
-node.name: elasticsearch1
 
 #
 # Add custom attributes to the node:
@@ -71,12 +70,12 @@ http.port: 9200
 # Pass an initial list of hosts to perform discovery when new node is started:
 # The default list of hosts is ["127.0.0.1", "[::1]"]
 #
-discovery.zen.ping.unicast.hosts: ["elasticsearch1"]
+#discovery.zen.ping.unicast.hosts: ["elasticsearch1"]
 
 #
 # Prevent the "split brain" by configuring the majority of nodes (total number of nodes / 2 + 1):
 #
-# discovery.zen.minimum_master_nodes: 1
+discovery.zen.minimum_master_nodes: 1
 #
 # For more information, see the documentation at:
 # <http://www.elastic.co/guide/en/elasticsearch/reference/current/modules-discovery.html>

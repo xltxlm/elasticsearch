@@ -51,8 +51,7 @@ class ElasticsearchGetOne extends Elasticsearch
                 [
                     'id' => $this->getId(),
                 ];
-            $client = ClientBuilder::create()->build();
-            $response = $client->get($index);
+            $response = $this->getClient()->get($index);
 
             return (new \ReflectionClass($this->getBodyClass()))
                 ->newInstance($response['_source']);
