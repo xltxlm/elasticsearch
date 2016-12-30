@@ -14,8 +14,7 @@
 #
 # Use a descriptive name for your cluster:
 #
-#cluster.name: my-application
-#cluster.name: run_elasticsearch
+cluster.name: application
 #
 # ------------------------------------ Node ------------------------------------
 #
@@ -33,7 +32,7 @@
 # Path to directory where to store the data (separate multiple locations by comma):
 #
 #path.data: /path/to/data
-path.data: /elasticsearch/data/
+#path.data: /elasticsearch/data/
 
 #
 # Path to log files:
@@ -70,7 +69,7 @@ http.port: 9200
 # Pass an initial list of hosts to perform discovery when new node is started:
 # The default list of hosts is ["127.0.0.1", "[::1]"]
 #
-#discovery.zen.ping.unicast.hosts: ["elasticsearch1"]
+discovery.zen.ping.unicast.hosts: ["docker_elasticsearch_1","docker_elasticsearch_2"]
 
 #
 # Prevent the "split brain" by configuring the majority of nodes (total number of nodes / 2 + 1):

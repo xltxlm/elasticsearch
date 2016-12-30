@@ -23,9 +23,53 @@ abstract class ElasticsearchConfig
     protected $index = '';
     /** @var string 类型,也就是表 */
     protected $type = '';
+    /** @var string 开启http认账的账户 */
+    protected $user = '';
+    /** @var string 开启http认证的密码 */
+    protected $pass = '';
 
     /** @var int 超时设置 */
     protected $timeout = 1;
+
+    /**
+     * @return string
+     */
+    public function getUser(): string
+    {
+        return $this->user;
+    }
+
+    /**
+     * @param string $user
+     *
+     * @return ElasticsearchConfig
+     */
+    public function setUser(string $user): ElasticsearchConfig
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPass(): string
+    {
+        return $this->pass;
+    }
+
+    /**
+     * @param string $pass
+     *
+     * @return ElasticsearchConfig
+     */
+    public function setPass(string $pass): ElasticsearchConfig
+    {
+        $this->pass = $pass;
+
+        return $this;
+    }
 
     /**
      * @return int

@@ -33,7 +33,16 @@ abstract class Elasticsearch
     {
         if (empty($this->client)) {
             $this->client = ClientBuilder::create()
-                ->setHosts([$this->getElasticsearchConfig()->getHost().':'.$this->getElasticsearchConfig()->getPort()])
+                ->setHosts(
+                    [
+                        [
+                            "host" => $this->getElasticsearchConfig()->getHost(),
+                            "port" => $this->getElasticsearchConfig()->getPort(),
+                            "user" => $this->getElasticsearchConfig()->getUser(),
+                            "pass" => $this->getElasticsearchConfig()->getPass()
+                        ]
+                    ]
+                )
                 ->build();
         }
         return $this->client;
