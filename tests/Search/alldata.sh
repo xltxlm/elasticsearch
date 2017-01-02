@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-curl -XPUT localhost:9200/test/_mapping/jd -d '
+curl -XGET localhost:9200/test/jd/_search -d '
 {
     "query": {
         "match_all": {}
