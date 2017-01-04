@@ -8,11 +8,15 @@
 
 namespace xltxlm\elasticsearch\Unit;
 
+use xltxlm\config\TestConfig;
+use xltxlm\elasticsearch\ElasticsearchQuery;
+use xltxlm\page\PageObject;
+
 /**
  * 检索数据库模型
  * Class ElasticsearchModel.
  */
-abstract class ElasticsearchConfig
+abstract class ElasticsearchConfig implements TestConfig
 {
     /** @var string 服务器ip地址 */
     protected $host = '127.0.0.1';
@@ -169,6 +173,17 @@ abstract class ElasticsearchConfig
         $this->type = $type;
 
         return $this;
+    }
+
+    public function test()
+    {
+        $pageObject = new PageObject();
+        return (new ElasticsearchQuery())
+            ->setElasticsearchConfig(new static())
+            ->setClassName(\stdClass::class)
+            ->setPageObject($pageObject)
+            ->setBodyString("")
+            ->__invoke();
     }
 
     /**

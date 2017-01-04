@@ -12,6 +12,7 @@
     "xltxlm/logger": "*",
     "xltxlm/helper": "*",
     "xltxlm/page": "*",
+    "xltxlm/config": "*",
     "elasticsearch/elasticsearch": "~v5."
   },
   "require-dev": {
