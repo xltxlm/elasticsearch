@@ -4,14 +4,14 @@ services:
   elasticsearch:
     image: runelasticsearch
     volumes:
-      #- ./elasticsearch/:/elasticsearch/
       - ./elasticsearch/:/elasticsearch/
       - ../../:/opt/
     networks:
       comm:
-#        aliases:
-#          - elasticsearch1
-
+        aliases:
+          - elasticsearch
+    ports:
+        - "9200:9200/tcp"
     restart: always
 
 networks:

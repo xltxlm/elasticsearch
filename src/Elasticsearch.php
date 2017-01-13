@@ -10,6 +10,7 @@ namespace xltxlm\elasticsearch;
 
 use Elasticsearch\Client;
 use Elasticsearch\ClientBuilder;
+use xltxlm\elasticsearch\Logger\ElasticsearchConnectLogger;
 use xltxlm\elasticsearch\Unit\ElasticsearchConfig;
 
 
@@ -23,16 +24,16 @@ abstract class Elasticsearch
     protected $elasticsearchConfig;
     /** @var string id,也就是数据库的自增id */
     protected $id = '';
-
-    protected $client;
+    /** @var  Client */
+    protected static $client;
 
     /**
      * @return Client
      */
-    public function getClient()
+    protected function getClient()
     {
-        if (empty($this->client)) {
-            $this->client = ClientBuilder::create()
+        if (empty(self::$client)) {
+            self::$client = ClientBuilder::create()
                 ->setHosts(
                     [
                         [
@@ -44,8 +45,11 @@ abstract class Elasticsearch
                     ]
                 )
                 ->build();
+            (new ElasticsearchConnectLogger)
+                ->setElasticsearchConfig($this->getElasticsearchConfig())
+                ->__invoke();
         }
-        return $this->client;
+        return self::$client;
     }
 
 
