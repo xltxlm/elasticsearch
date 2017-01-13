@@ -97,7 +97,10 @@ final class <?=$this->getClassShortName()?>ElasticsearchQuery
      */
     public function where($keyword)
     {
-        $this->__string = $keyword;
+        if($keyword)
+        {
+                $this->__string = $keyword;
+        }
         return $this;
     }
 

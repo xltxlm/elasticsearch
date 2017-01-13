@@ -156,7 +156,7 @@ class ElasticsearchMakeToolUnit
         $dirname = dirname($this->getFilePath()).'/'.(new \ReflectionClass($this->getElasticsearchMakeTool()->getElasticsearchConfig()))->getShortName();
         mkdir($dirname);
         ob_start();
-        include __DIR__."/../MakeTool/Tpl.php";
+        include __DIR__."/../MakeTool/ElasticsearchMakeToolUnit.Tpl.php";
         $content = ob_get_clean();
         file_put_contents($dirname.'/'.$this->getClassShortName().'ElasticsearchQuery.php', $content);
     }

@@ -62,7 +62,6 @@ final class VideoDemoBodyElasticsearchQuery
                 }'.$sort.'
             }';
 
-
         return (new ElasticsearchQuery())
             ->setElasticsearchConfig(new \xltxlm\elasticsearch\tests\Resource\VideoBaseConfig())
             ->setClassName(\xltxlm\elasticsearch\tests\Resource\VideoDemoBody::class)
@@ -96,7 +95,10 @@ final class VideoDemoBodyElasticsearchQuery
      */
     public function where($keyword)
     {
-        $this->__string = $keyword;
+        if($keyword)
+        {
+                $this->__string = $keyword;
+        }
         return $this;
     }
 
