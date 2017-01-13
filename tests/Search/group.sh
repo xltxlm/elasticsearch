@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # 最简单的分组查询 多字段
-curl -XGET localhost:9200/test/jd/_search -d '
+curl -XGET localhost:9200/jd/data/_search -d '
 {
 	"size": 0,
 	"aggs": {
@@ -15,7 +15,7 @@ curl -XGET localhost:9200/test/jd/_search -d '
 
 
 # 最简单的分组查询 多字段
-curl -XGET localhost:9200/test/jd/_search -d '
+curl -XGET localhost:9200/jd/data/_search -d '
 {
 	"size": 0,
 	"aggs": {

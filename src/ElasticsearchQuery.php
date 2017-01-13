@@ -143,8 +143,27 @@ class ElasticsearchQuery extends Elasticsearch
         $response = $this->getClient()->search($index);
         $BodyObjects = [];
         foreach ($response['hits']['hits'] as $hit) {
-            $BodyObjects[] = (new \ReflectionClass($this->getClassName()))
-                ->newInstance($hit['_source']);
+            if ($this->getClassName() == \stdClass::class) {
+                $stdClass = new \stdClass;
+                foreach ($hit['_source'] as $key => $item) {
+                    $stdClass->$key = $item;
+                }
+                $BodyObjects[] = $stdClass;
+            } else {
+                //通过反射的方式加载内容:注意,不会调用内部的 get/set 对来处理内容
+                $newInstance = (new \ReflectionClass($this->getClassName()))
+                    ->newInstance();
+                foreach ($hit['_source'] as $key => $item) {
+                    try {
+                        $ReflectionProperty = (new \ReflectionProperty($newInstance, $key));
+                        $ReflectionProperty->setAccessible(true);
+                        $ReflectionProperty->setValue($newInstance, $item);
+                    } catch (\Exception $e) {
+                        $newInstance->$key = $item;
+                    }
+                }
+                $BodyObjects[] = $newInstance;
+            }
         }
         $this->pageObject->setTotal($response['hits']['total'])
             ->__invoke();

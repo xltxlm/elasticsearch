@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 #查找手机类型的数据 , 对于keyword模糊匹配,查找不到任何数据
-curl -XPOST http://localhost:9200/test/jd/_search -d'
+curl -XPOST http://localhost:9200/jd/data/_search -d'
 {
     "query" : {
         "term" : {"tag":"手" }
@@ -10,7 +10,7 @@ curl -XPOST http://localhost:9200/test/jd/_search -d'
 '|jshon
 
 #查找手机类型的数据 , 精准匹配
-curl -XPOST http://localhost:9200/test/jd/_search -d'
+curl -XPOST http://localhost:9200/jd/data/_search -d'
 {
     "query" : {
         "term" : {"tag":"手机" }
@@ -19,7 +19,7 @@ curl -XPOST http://localhost:9200/test/jd/_search -d'
 '|jshon
 
 #查找手机类型的数据 , 精准匹配 - 按照时间倒序
-curl -XPOST http://localhost:9200/test/jd/_search -d'
+curl -XPOST http://localhost:9200/jd/data/_search -d'
 {
     "query" : {
         "term" : {"tag":"手机" }
@@ -33,7 +33,7 @@ curl -XPOST http://localhost:9200/test/jd/_search -d'
 
 
 #双重检索  并且操作, 精准匹配 - 按照时间倒序
-curl -XPOST http://localhost:9200/test/jd/_search -d'
+curl -XPOST http://localhost:9200/jd/data/_search -d'
 {
     "query" : {
         "bool":{
@@ -51,7 +51,7 @@ curl -XPOST http://localhost:9200/test/jd/_search -d'
 '|jshon
 
 #双重检索  或操作, 精准匹配 - 按照时间倒序
-curl -XPOST http://localhost:9200/test/jd/_search -d'
+curl -XPOST http://localhost:9200/jd/data/_search -d'
 {
     "query" : {
         "bool":{

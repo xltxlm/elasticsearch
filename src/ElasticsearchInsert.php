@@ -10,6 +10,7 @@ namespace xltxlm\elasticsearch;
 
 use Elasticsearch\ClientBuilder;
 use xltxlm\elasticsearch\Unit\ElasticsearchModel;
+use xltxlm\helper\Hclass\ConvertObject;
 use xltxlm\helper\Hclass\ObjectToArray;
 
 /**
@@ -49,7 +50,7 @@ final class ElasticsearchInsert extends Elasticsearch
         $index = $this->getElasticsearchConfig()->__invoke() +
             [
                 'id' => $this->getId(),
-                'body' => $this->getBody()->__toArray()
+                'body' => (new ConvertObject($this->getBody()))->toArray()
             ];
         $this->getClient()->index($index);
         return true;

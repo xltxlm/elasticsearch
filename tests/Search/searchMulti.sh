@@ -2,7 +2,7 @@
 
 multi_match
 #所有字段检索
-curl -XPOST http://localhost:9200/test/jd/_search -d'
+curl -XPOST http://localhost:9200/jd/data/_search -d'
 {
     "query" : {
         "query_string":{
@@ -14,7 +14,7 @@ curl -XPOST http://localhost:9200/test/jd/_search -d'
 '|jshon
 
 #所有字段检索 看看能不能命中id
-curl -XPOST http://localhost:9200/test/jd/_search -d'
+curl -XPOST http://localhost:9200/jd/data/_search -d'
 {
     "query" : {
         "query_string":{

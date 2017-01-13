@@ -4,12 +4,12 @@
 curl localhost:9200/_cat/nodes?v
 curl localhost:9200/_cat/indices?v
 #删除掉指定的索引
-curl -XDELETE http://localhost:9200/test | jshon
+#curl -XDELETE http://localhost:9200/jd | jshon
 #创建索引
-curl -XPUT http://localhost:9200/test
+curl -XPUT http://localhost:9200/jd
 
 #创建表,并且指定字段类型
-curl -XPUT localhost:9200/test/_mapping/jd -d'
+curl -XPUT localhost:9200/jd/_mapping/data -d'
 {
     "_all": {
             "analyzer": "ik_max_word",
@@ -22,6 +22,9 @@ curl -XPUT localhost:9200/test/_mapping/jd -d'
                 "type": "long"
             },
             "cateid": {
+                "type": "long"
+            },
+            "money": {
                 "type": "long"
             },
              "tag": {
@@ -41,5 +44,5 @@ curl -XPUT localhost:9200/test/_mapping/jd -d'
     }
 }'
 #查看索引结构
-curl -XGET localhost:9200/test| jshon
+curl -XGET localhost:9200/jd| jshon
 

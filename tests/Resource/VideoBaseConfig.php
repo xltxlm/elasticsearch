@@ -15,6 +15,6 @@ use xltxlm\elasticsearch\Unit\ElasticsearchConfig;
  */
 final class VideoBaseConfig extends ElasticsearchConfig
 {
-    protected $index="core2";
-    protected $type="video";
+    protected $index="jd";
+    protected $type="data";
 }
