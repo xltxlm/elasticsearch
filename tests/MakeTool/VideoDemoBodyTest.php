@@ -78,6 +78,30 @@ class VideoDemoBodyTest extends TestCase
     }
 
     /**
+     * 测试模糊查询全部字段
+     */
+    public function testALLField()
+    {
+        $pageObject = (new PageObject())
+            ->setPrepage(20);
+        $tag = "手机";
+        $VideoDemoBodyElasticsearchQuery = (new VideoDemoBodyElasticsearchQuery())
+            ->setPageObject($pageObject)
+            ->where($tag)
+            ->orderbyIdDesc()
+            ->orderbyMoneyDesc()
+            ->__invoke();
+        $old = 0;
+        /** @var  \xltxlm\elasticsearch\tests\Resource\VideoDemoBody $item */
+        foreach ($VideoDemoBodyElasticsearchQuery as $item) {
+            if ($old) {
+                $this->assertGreaterThan($item->getId(), $old);
+            }
+            $old = $item->getId();
+        }
+    }
+
+    /**
      * 测试等于. 排序,区间范围
      */
     public function testEqualMoreOrderRange()

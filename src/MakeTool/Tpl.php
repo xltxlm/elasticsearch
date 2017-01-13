@@ -23,6 +23,9 @@ final class <?=$this->getClassShortName()?>ElasticsearchQuery
     /** @var array 区间范围  */
     protected $__orderby = [];
 
+    /** @var string 模糊检索的字符串  */
+    protected $__string = "";
+
     /** @var  PageObject */
     protected $pageObject;
 
@@ -42,13 +45,13 @@ final class <?=$this->getClassShortName()?>ElasticsearchQuery
             $sort = ' ,"sort": [ '.join(",", $this->__orderby).' ] ';
         }
 
-        if (empty($this->__binds)) {
-            $query[] = sprintf('{"match_all": {} }');
-        } else {
-            foreach ($this->__binds as $field => $bind) {
-                $query[] = sprintf('{ "%s":{ "%s":"%s" } }', $bind['action'], $field, $bind['string']);
-            }
+        if (!empty($this->__string)) {
+            $query[] = sprintf('{"query_string": { "query": "%s"} }', $this->__string);
         }
+        foreach ($this->__binds as $field => $bind) {
+            $query[] = sprintf('{ "%s":{ "%s":"%s" } }', $bind['action'], $field, $bind['string']);
+        }
+
         $bodyString = '{
                 "query": {
                     "bool": {
@@ -87,6 +90,17 @@ final class <?=$this->getClassShortName()?>ElasticsearchQuery
         $this->pageObject = $pageObject;
         return $this;
     }
+
+    /**
+     * 模糊检索,全部字段都查询
+     * @return static
+     */
+    public function where($keyword)
+    {
+        $this->__string = $keyword;
+        return $this;
+    }
+
 
 <?php
 $Properties = $this->getProperties();
