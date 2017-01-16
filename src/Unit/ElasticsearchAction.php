@@ -18,8 +18,8 @@ class ElasticsearchAction
     const MOREANDEQUAL = "gte";
     const LESSANDEQUAL = "lte";
     //区间计算
-    const IN_EQUAL = ">=|<=";
-    const IN_EQUAL_LESS = ">|<=";
-    const IN_EQUAL_MORE = ">=|<";
-    const IN = ">|<";
+    const IN_EQUAL = "gte|lte";
+    const IN_EQUAL_LESS = "gt|lte";
+    const IN_EQUAL_MORE = "gte|lt";
+    const IN = "gt|lt";
 }

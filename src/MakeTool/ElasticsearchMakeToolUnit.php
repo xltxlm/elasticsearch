@@ -8,8 +8,6 @@
 
 namespace xltxlm\elasticsearch\MakeTool;
 
-use xltxlm\elasticsearch\Unit\ElasticsearchConfig;
-
 /**
  * 最小单元
  * Class ElasticsearchMakeToolUnit.

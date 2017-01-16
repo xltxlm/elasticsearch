@@ -37,7 +37,7 @@ final class <?=$this->getClassShortName()?>ElasticsearchQuery
         $query = [];
         if ($this->__ranges) {
             foreach ($this->__ranges as $field => $bind) {
-                $query[] = sprintf('{ "range":{ "%s":{ "%s":"%s" } } }', $field, $bind['action'], $bind['string']);
+                $query[] = $bind;
             }
         }
         $sort = '';
@@ -65,8 +65,8 @@ final class <?=$this->getClassShortName()?>ElasticsearchQuery
 
 
         return (new ElasticsearchQuery())
-            ->setElasticsearchConfig(new \xltxlm\elasticsearch\tests\Resource\VideoBaseConfig())
-            ->setClassName(\xltxlm\elasticsearch\tests\Resource\VideoDemoBody::class)
+            ->setElasticsearchConfig(new \<?=(new \ReflectionClass($this->getElasticsearchMakeTool()->getElasticsearchConfig()))->getName()?>)
+            ->setClassName(\<?=$this->getClassName()?>::class)
             //由于下面有踢出结果的操作,查询结果放大3倍
             ->setPageObject($this->getPageObject())
             ->setBodyString($bodyString)
@@ -120,8 +120,13 @@ foreach ($Properties as $property) {
     * @param string $action
     * @return static
     */
-    public function where<?=ucfirst($property->getName())?>($<?=$property->getName()?>,$action=ElasticsearchAction::EQUAL)
+    public function where<?=ucfirst($property->getName())?>($<?=$property->getName()?>,$action=ElasticsearchAction::EQUAL, $explode=" - ")
     {
+        $<?=$property->getName()?>=trim($<?=$property->getName()?>);
+        if(empty($<?=$property->getName()?>))
+        {
+            return $this;
+        }
         if( in_array( $action , [ ElasticsearchAction::EQUAL ,ElasticsearchAction::LIKE ]) )
         {
             $this->__binds['<?=$property->getName()?>'] =
@@ -133,31 +138,13 @@ foreach ($Properties as $property) {
 
         if( in_array( $action , [ ElasticsearchAction::MORE ,ElasticsearchAction::LESS, ElasticsearchAction::MOREANDEQUAL, ElasticsearchAction::LESSANDEQUAL ]) )
         {
-            $this->__ranges['<?=$property->getName()?>'] =
-                [
-                    'action' => $action,
-                    'string' => $<?=$property->getName()?>
-                ];
+            $this->__ranges['<?=$property->getName()?>'] = sprintf('{ "range":{ "<?=$property->getName()?>":{ "%s":"%s" } } }',  $action, $<?=$property->getName()?>);
         }
-        return $this;
-    }
-    /**
-    * @param string $<?=$property->getName()?>
-
-    * @param string $action
-     * 如果值存在,就进行对比
-     * @return static
-    */
-    public function where<?=ucfirst($property->getName())?>Maybe($<?=$property->getName()?>,$action=ElasticsearchAction::EQUAL)
-    {
-        if(!empty($<?=$property->getName()?>))
+        if( in_array( $action , [ ElasticsearchAction::IN_EQUAL ,ElasticsearchAction::IN_EQUAL ]) )
         {
-            if( $action == ElasticsearchAction::EQUAL)
-            {
-                $this->__binds['<?=$property->getName()?>'] = $<?=$property->getName()?>;
-            }else
-            {
-            }
+            list($ltval,$gtval)=explode($explode,$<?=$property->getName()?>);
+            list($lt,$gt)=explode("|",$action);
+            $this->__ranges['<?=$property->getName()?>'] = sprintf('{ "range":{ "<?=$property->getName()?>":{ "%s":"%s","%s":"%s" } } }',  $lt,$ltval,$gt,$gtval);
         }
         return $this;
     }
