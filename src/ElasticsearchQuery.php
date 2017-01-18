@@ -21,6 +21,10 @@ class ElasticsearchQuery extends Elasticsearch
     protected $bodyString;
     /** @var string 返回的对象类型 */
     protected $className = "";
+    /** @var array 倒序排列的字段名称 */
+    protected $OrderByDesc = [];
+    /** @var array 正向排列的字段名称 */
+    protected $OrderByAsc = [];
     /** @var PageObject 分页 */
     protected $pageObject;
 
@@ -82,6 +86,46 @@ class ElasticsearchQuery extends Elasticsearch
         return $this;
     }
 
+    /**
+     * @return array
+     */
+    public function getOrderByDesc(): array
+    {
+        return $this->OrderByDesc;
+    }
+
+    /**
+     * @param array $OrderByDesc
+     *
+     * @return ElasticsearchQuery
+     */
+    public function setOrderByDesc(array $OrderByDesc): ElasticsearchQuery
+    {
+        $this->OrderByDesc = $OrderByDesc;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getOrderByAsc(): array
+    {
+        return $this->OrderByAsc;
+    }
+
+    /**
+     * @param array $OrderByAsc
+     *
+     * @return ElasticsearchQuery
+     */
+    public function setOrderByAsc(array $OrderByAsc): ElasticsearchQuery
+    {
+        $this->OrderByAsc = $OrderByAsc;
+
+        return $this;
+    }
+
     public function __invoke()
     {
         $index = $this->getElasticsearchConfig()->__invoke() +
@@ -104,6 +148,12 @@ class ElasticsearchQuery extends Elasticsearch
                 foreach ($hit['_source'] as $key => $item) {
                     $stdClass->$key = $item;
                 }
+                if ($hit['highlight']) {
+                    foreach ($hit['highlight'] as $key1 => $item1) {
+                        $item1 = current($item1);
+                        $stdClass->$key1 = $item1;
+                    }
+                }
                 $BodyObjects[] = $stdClass;
             } else {
                 //通过反射的方式加载内容:注意,不会调用内部的 get/set 对来处理内容
@@ -116,6 +166,18 @@ class ElasticsearchQuery extends Elasticsearch
                         $ReflectionProperty->setValue($newInstance, $item);
                     } catch (\Exception $e) {
                         $newInstance->$key = $item;
+                    }
+                    if ($hit['highlight']) {
+                        foreach ($hit['highlight'] as $key1 => $item1) {
+                            $item1 = current($item1);
+                            try {
+                                $ReflectionProperty = (new \ReflectionProperty($newInstance, $key1));
+                                $ReflectionProperty->setAccessible(true);
+                                $ReflectionProperty->setValue($newInstance, $item1);
+                            } catch (\Exception $e) {
+                                $newInstance->$key1 = $item1;
+                            }
+                        }
                     }
                 }
                 $BodyObjects[] = $newInstance;
