@@ -21,10 +21,6 @@ class ElasticsearchQuery extends Elasticsearch
     protected $bodyString;
     /** @var string 返回的对象类型 */
     protected $className = "";
-    /** @var array 倒序排列的字段名称 */
-    protected $OrderByDesc = [];
-    /** @var array 正向排列的字段名称 */
-    protected $OrderByAsc = [];
     /** @var PageObject 分页 */
     protected $pageObject;
 
@@ -82,46 +78,6 @@ class ElasticsearchQuery extends Elasticsearch
     public function setBodyString($bodyString)
     {
         $this->bodyString = $bodyString;
-
-        return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function getOrderByDesc(): array
-    {
-        return $this->OrderByDesc;
-    }
-
-    /**
-     * @param array $OrderByDesc
-     *
-     * @return ElasticsearchQuery
-     */
-    public function setOrderByDesc(array $OrderByDesc): ElasticsearchQuery
-    {
-        $this->OrderByDesc = $OrderByDesc;
-
-        return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function getOrderByAsc(): array
-    {
-        return $this->OrderByAsc;
-    }
-
-    /**
-     * @param array $OrderByAsc
-     *
-     * @return ElasticsearchQuery
-     */
-    public function setOrderByAsc(array $OrderByAsc): ElasticsearchQuery
-    {
-        $this->OrderByAsc = $OrderByAsc;
 
         return $this;
     }
