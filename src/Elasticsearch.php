@@ -25,31 +25,29 @@ abstract class Elasticsearch
     /** @var string id,也就是数据库的自增id */
     protected $id = '';
     /** @var  Client */
-    protected static $client;
+    protected static $client = [];
 
     /**
      * @return Client
      */
     protected function getClient()
     {
-        if (empty(self::$client)) {
-            self::$client = ClientBuilder::create()
-                ->setHosts(
-                    [
-                        [
-                            "host" => $this->getElasticsearchConfig()->getHost(),
-                            "port" => $this->getElasticsearchConfig()->getPort(),
-                            "user" => $this->getElasticsearchConfig()->getUser(),
-                            "pass" => $this->getElasticsearchConfig()->getPass()
-                        ]
-                    ]
-                )
+        $config = [
+            "host" => $this->getElasticsearchConfig()->getHost(),
+            "port" => $this->getElasticsearchConfig()->getPort(),
+            "user" => $this->getElasticsearchConfig()->getUser(),
+            "pass" => $this->getElasticsearchConfig()->getPass()
+        ];
+        $configSign = md5(json_encode($config));
+        if (empty(self::$client[$configSign])) {
+            self::$client[$configSign] = ClientBuilder::create()
+                ->setHosts([$config])
                 ->build();
             (new ElasticsearchConnectLogger)
                 ->setElasticsearchConfig($this->getElasticsearchConfig())
                 ->__invoke();
         }
-        return self::$client;
+        return self::$client[$configSign];
     }
 
 
