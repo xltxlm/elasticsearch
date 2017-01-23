@@ -50,7 +50,10 @@ final class ElasticsearchInsert extends Elasticsearch
         $index = $this->getElasticsearchConfig()->__invoke() +
             [
                 'id' => $this->getId(),
-                'body' => (new ConvertObject($this->getBody()))->toArray()
+                'body' => (new ConvertObject($this->getBody()))->toArray() +
+                    [
+                        'elasticsearch_update_time' => date('Y-m-d H:i:s')
+                    ]
             ];
         $this->getClient()->index($index);
         return true;
