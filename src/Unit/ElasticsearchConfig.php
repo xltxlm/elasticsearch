@@ -175,6 +175,10 @@ abstract class ElasticsearchConfig implements TestConfig
         return $this;
     }
 
+    /**
+     * 测试服务是否正常
+     * @return array
+     */
     public function test()
     {
         $pageObject = new PageObject();

@@ -7,13 +7,6 @@ use xltxlm\elasticsearch\ElasticsearchQuery;
 use \xltxlm\elasticsearch\Unit\ElasticsearchAction;
 use xltxlm\page\PageObject;
 
-/**
-* Created by PhpStorm.
-* User: xialintai
-* Date: 2017/1/13
-* Time: 11:11
-*/
-
 final class <?=$this->getClassShortName()?>ElasticsearchQuery
 {
     /** @var array 查询的内容  */
@@ -22,6 +15,8 @@ final class <?=$this->getClassShortName()?>ElasticsearchQuery
     protected $__ranges = [];
     /** @var array 区间范围  */
     protected $__orderby = [];
+    /** @var array 被排除的关键词数组  */
+    protected $__notin = [];
 
     /** @var string 模糊检索的字符串  */
     protected $__string = "";
@@ -34,7 +29,7 @@ final class <?=$this->getClassShortName()?>ElasticsearchQuery
      */
     public function __invoke()
     {
-        $query = [];
+        $query = $queryNotIn = [];
         if ($this->__ranges) {
             foreach ($this->__ranges as $field => $bind) {
                 $query[] = $bind;
@@ -51,6 +46,9 @@ final class <?=$this->getClassShortName()?>ElasticsearchQuery
         foreach ($this->__binds as $field => $bind) {
             $query[] = sprintf('{ "%s":{ "%s":"%s" } }', $bind['action'], $field, $bind['string']);
         }
+        foreach ($this->__notin as $field => $bind) {
+            $queryNotIn[] = $bind;
+        }
 
         $bodyString = '{
                 "query": {
@@ -58,7 +56,11 @@ final class <?=$this->getClassShortName()?>ElasticsearchQuery
                          "must":
                          [
                             '.implode(",\n", $query).'
-                         ]
+                         ],
+                        "must_not":
+                        [
+                            '.implode(",\n", $queryNotIn).'
+                        ]
                     }
                 }'.$sort.'
             }';
@@ -122,7 +124,7 @@ foreach ($Properties as $property) {
     */
     public function where<?=ucfirst($property->getName())?>($<?=$property->getName()?>,$action=ElasticsearchAction::EQUAL, $explode=" - ")
     {
-        $<?=$property->getName()?>=trim($<?=$property->getName()?>);
+        $<?=$property->getName()?>=is_string($<?=$property->getName()?>)?trim($<?=$property->getName()?>):$<?=$property->getName()?>;
         if(empty($<?=$property->getName()?>))
         {
             return $this;
@@ -145,6 +147,28 @@ foreach ($Properties as $property) {
             list($ltval,$gtval)=explode($explode,$<?=$property->getName()?>);
             list($lt,$gt)=explode("|",$action);
             $this->__ranges['<?=$property->getName()?>'] = sprintf('{ "range":{ "<?=$property->getName()?>":{ "%s":"%s","%s":"%s" } } }',  $lt,$ltval,$gt,$gtval);
+        }
+        return $this;
+    }
+    /**
+    * @param string $<?=$property->getName()?>
+
+    * @param string $action
+    * @return static
+    */
+    public function where<?=ucfirst($property->getName())?>Notin($<?=$property->getName()?>,$action=ElasticsearchAction::EQUAL, $explode=" - ")
+    {
+        $<?=$property->getName()?>=is_string($<?=$property->getName()?>)?trim($<?=$property->getName()?>):$<?=$property->getName()?>;
+        if(empty($<?=$property->getName()?>))
+        {
+            return $this;
+        }
+        if( in_array( $action , [ ElasticsearchAction::EQUAL ]) )
+        {
+            foreach( $<?=$property->getName()?> as $item)
+            {
+                $this->__notin[] = sprintf('{ "%s":{ "<?=$property->getName()?>": "%s" } }',  ElasticsearchAction::EQUAL,$item);
+            }
         }
         return $this;
     }

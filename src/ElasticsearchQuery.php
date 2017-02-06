@@ -8,7 +8,7 @@
 
 namespace xltxlm\elasticsearch;
 
-use Elasticsearch\ClientBuilder;
+use xltxlm\elasticsearch\Logger\ElasticsearchRunLog;
 use xltxlm\page\PageObject;
 
 /**
@@ -140,6 +140,9 @@ class ElasticsearchQuery extends Elasticsearch
                 'size' => $this->getPageObject()->getPrepage(),
             ];
         }
+        (new ElasticsearchRunLog())
+            ->setQueryString($index)
+            ->__invoke();
         $response = $this->getClient()->search($index);
         $BodyObjects = [];
         foreach ($response['hits']['hits'] as $hit) {
