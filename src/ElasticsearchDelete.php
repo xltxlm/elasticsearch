@@ -8,8 +8,6 @@
 
 namespace xltxlm\elasticsearch;
 
-use Elasticsearch\ClientBuilder;
-
 /**
  * Class Delete.
  */

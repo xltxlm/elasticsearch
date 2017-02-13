@@ -8,10 +8,8 @@
 
 namespace xltxlm\elasticsearch;
 
-use Elasticsearch\ClientBuilder;
 use xltxlm\elasticsearch\Unit\ElasticsearchModel;
 use xltxlm\helper\Hclass\ConvertObject;
-use xltxlm\helper\Hclass\ObjectToArray;
 
 /**
  * 写入数据
@@ -43,7 +41,7 @@ final class ElasticsearchInsert extends Elasticsearch
     }
 
     /**
-     * 执行写入操作
+     * 执行写入操作.
      */
     public function __invoke()
     {
@@ -52,10 +50,11 @@ final class ElasticsearchInsert extends Elasticsearch
                 'id' => $this->getId(),
                 'body' => (new ConvertObject($this->getBody()))->toArray() +
                     [
-                        'elasticsearch_update_time' => date('Y-m-d H:i:s')
-                    ]
+                        'elasticsearch_update_time' => date('Y-m-d H:i:s'),
+                    ],
             ];
         $this->getClient()->index($index);
+
         return true;
     }
 }

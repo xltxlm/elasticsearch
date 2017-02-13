@@ -1,5 +1,13 @@
 #!/usr/bin/env bash
 
+curl -XGET localhost:9200/jd/data/_search -d '
+{
+    "query": {
+        "match_all": {}
+    }
+}' | jshon
+
+
 #查找手机类型的数据 , 对于keyword模糊匹配,查找不到任何数据
 curl -XPOST http://localhost:9200/jd/data/_search -d'
 {
@@ -65,6 +73,31 @@ curl -XPOST http://localhost:9200/jd/data/_search -d'
     [
         {"addtime":"desc"}
     ]
+}
+'|jshon
+
+
+#所有字段检索
+curl -XPOST http://localhost:9200/jd/data/_search -d'
+{
+    "query" : {
+        "query_string":{
+            "query":"手机",
+            "analyzer":"ik_max_word"
+        }
+    }
+}
+'|jshon
+
+#所有字段检索 看看能不能命中id
+curl -XPOST http://localhost:9200/jd/data/_search -d'
+{
+    "query" : {
+        "query_string":{
+            "query":"6208554939514357761",
+            "analyzer":"ik_max_word"
+        }
+    }
 }
 '|jshon
 

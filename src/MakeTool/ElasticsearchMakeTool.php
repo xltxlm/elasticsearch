@@ -32,11 +32,13 @@ class ElasticsearchMakeTool
 
     /**
      * @param ElasticsearchConfig $ElasticsearchConfig
+     *
      * @return ElasticsearchMakeTool
      */
     public function setElasticsearchConfig(ElasticsearchConfig $ElasticsearchConfig): ElasticsearchMakeTool
     {
         $this->ElasticsearchConfig = $ElasticsearchConfig;
+
         return $this;
     }
 
@@ -50,14 +52,15 @@ class ElasticsearchMakeTool
 
     /**
      * @param string $classNames
+     *
      * @return ElasticsearchMakeTool
      */
     public function setClassNames(string $classNames): ElasticsearchMakeTool
     {
         $this->classNames[] = $classNames;
+
         return $this;
     }
-
 
     public function __invoke()
     {

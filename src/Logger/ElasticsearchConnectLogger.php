@@ -8,6 +8,7 @@
 
 namespace xltxlm\elasticsearch\Logger;
 
+use xltxlm\elasticsearch\Elasticsearch;
 use xltxlm\elasticsearch\Unit\ElasticsearchConfig;
 use xltxlm\logger\Log\DefineLog;
 
@@ -19,6 +20,16 @@ class ElasticsearchConnectLogger extends DefineLog
 {
     /** @var ElasticsearchConfig */
     protected $ElasticsearchConfig;
+
+    /**
+     * 当前记录的类算在运行类身上,不是orm
+     * PdoRunLog constructor.
+     */
+    public function __construct()
+    {
+        parent::__construct();
+        $this->setReource(Elasticsearch::class);
+    }
 
     /**
      * @return ElasticsearchConfig

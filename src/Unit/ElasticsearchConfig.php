@@ -176,17 +176,19 @@ abstract class ElasticsearchConfig implements TestConfig
     }
 
     /**
-     * 测试服务是否正常
+     * 测试服务是否正常.
+     *
      * @return array
      */
     public function test()
     {
         $pageObject = new PageObject();
+
         return (new ElasticsearchQuery())
             ->setElasticsearchConfig(new static())
             ->setClassName(\stdClass::class)
             ->setPageObject($pageObject)
-            ->setBodyString("")
+            ->setBodyString('')
             ->__invoke();
     }
 

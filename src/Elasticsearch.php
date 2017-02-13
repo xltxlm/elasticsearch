@@ -3,7 +3,7 @@
  * Created by PhpStorm.
  * User: xialintai
  * Date: 2016/12/24
- * Time: 19:02
+ * Time: 19:02.
  */
 
 namespace xltxlm\elasticsearch;
@@ -13,18 +13,16 @@ use Elasticsearch\ClientBuilder;
 use xltxlm\elasticsearch\Logger\ElasticsearchConnectLogger;
 use xltxlm\elasticsearch\Unit\ElasticsearchConfig;
 
-
 /**
- * Class Elasticsearch
- * @package xltxlm\elasticsearch
+ * Class Elasticsearch.
  */
 abstract class Elasticsearch
 {
-    /** @var  ElasticsearchConfig */
+    /** @var ElasticsearchConfig */
     protected $elasticsearchConfig;
     /** @var string id,也就是数据库的自增id */
     protected $id = '';
-    /** @var  Client */
+    /** @var Client */
     protected static $client = [];
 
     /**
@@ -33,23 +31,23 @@ abstract class Elasticsearch
     protected function getClient()
     {
         $config = [
-            "host" => $this->getElasticsearchConfig()->getHost(),
-            "port" => $this->getElasticsearchConfig()->getPort(),
-            "user" => $this->getElasticsearchConfig()->getUser(),
-            "pass" => $this->getElasticsearchConfig()->getPass()
+            'host' => $this->getElasticsearchConfig()->getHost(),
+            'port' => $this->getElasticsearchConfig()->getPort(),
+            'user' => $this->getElasticsearchConfig()->getUser(),
+            'pass' => $this->getElasticsearchConfig()->getPass(),
         ];
         $configSign = md5(json_encode($config));
         if (empty(self::$client[$configSign])) {
             self::$client[$configSign] = ClientBuilder::create()
                 ->setHosts([$config])
                 ->build();
-            (new ElasticsearchConnectLogger)
+            (new ElasticsearchConnectLogger())
                 ->setElasticsearchConfig($this->getElasticsearchConfig())
                 ->__invoke();
         }
+
         return self::$client[$configSign];
     }
-
 
     /**
      * @return ElasticsearchConfig
@@ -61,11 +59,13 @@ abstract class Elasticsearch
 
     /**
      * @param ElasticsearchConfig $elasticsearchConfig
+     *
      * @return $this
      */
     final public function setElasticsearchConfig(ElasticsearchConfig $elasticsearchConfig)
     {
         $this->elasticsearchConfig = $elasticsearchConfig;
+
         return $this;
     }
 
@@ -88,5 +88,4 @@ abstract class Elasticsearch
 
         return $this;
     }
-
 }

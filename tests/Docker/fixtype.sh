@@ -4,7 +4,7 @@ curl -XDELETE http://localhost:9200/core2
 curl -XPUT http://localhost:9200/core2
 
 
-curl -XGET http://localhost:9200/core/video/_mapping
+curl -XGET http://localhost:9200/core2/video/_mapping
 
 curl -XPOST http://localhost:9200/core2/video/_mapping -d'
 {

@@ -111,11 +111,9 @@ final class <?=$this->getClassShortName()?>ElasticsearchQuery
 $Properties = $this->getProperties();
 /** @var \ReflectionProperty $property */
 foreach ($Properties as $property) {
-    if($property->getName()[0]=='_' && $property->getName()[1]=='_')
-    {
+    if ($property->getName()[0] == '_' && $property->getName()[1] == '_') {
         continue;
-    }
-?>
+    } ?>
     /**
     * @param string $<?=$property->getName()?>
 
@@ -193,5 +191,6 @@ foreach ($Properties as $property) {
         $this->__orderby['<?=$property->getName()?>'] = '{"<?=$property->getName()?>" : "desc"}';
         return $this;
     }
-<?php }?>
+<?php 
+}?>
 }

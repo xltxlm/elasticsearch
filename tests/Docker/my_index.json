@@ -1,0 +1,11 @@
+{
+  "mappings": {
+    "my_type": {
+      "properties": {
+        "tags": {
+          "type": "keyword"
+        }
+      }
+    }
+  }
+}

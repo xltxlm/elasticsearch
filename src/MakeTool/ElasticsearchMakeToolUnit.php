@@ -14,7 +14,7 @@ namespace xltxlm\elasticsearch\MakeTool;
  */
 class ElasticsearchMakeToolUnit
 {
-    /** @var  ElasticsearchMakeTool */
+    /** @var ElasticsearchMakeTool */
     protected $ElasticsearchMakeTool;
 
     /** @var string 需要转换的类 */
@@ -27,7 +27,7 @@ class ElasticsearchMakeToolUnit
     protected $nameSpace = '';
 
     /** @var string 类文件的路径 */
-    protected $filePath = "";
+    protected $filePath = '';
 
     /** @var \ReflectionProperty[] */
     protected $Properties = [];
@@ -42,14 +42,15 @@ class ElasticsearchMakeToolUnit
 
     /**
      * @param string $classShortName
+     *
      * @return ElasticsearchMakeToolUnit
      */
     public function setClassShortName(string $classShortName): ElasticsearchMakeToolUnit
     {
         $this->classShortName = $classShortName;
+
         return $this;
     }
-
 
     /**
      * @return ElasticsearchMakeTool
@@ -61,14 +62,15 @@ class ElasticsearchMakeToolUnit
 
     /**
      * @param ElasticsearchMakeTool $ElasticsearchMakeTool
+     *
      * @return ElasticsearchMakeToolUnit
      */
     public function setElasticsearchMakeTool(ElasticsearchMakeTool $ElasticsearchMakeTool): ElasticsearchMakeToolUnit
     {
         $this->ElasticsearchMakeTool = $ElasticsearchMakeTool;
+
         return $this;
     }
-
 
     /**
      * @return string
@@ -88,14 +90,15 @@ class ElasticsearchMakeToolUnit
 
     /**
      * @param string $filePath
+     *
      * @return ElasticsearchMakeToolUnit
      */
     public function setFilePath(string $filePath): ElasticsearchMakeToolUnit
     {
         $this->filePath = $filePath;
+
         return $this;
     }
-
 
     /**
      * @param string $nameSpace
@@ -154,7 +157,7 @@ class ElasticsearchMakeToolUnit
         $dirname = dirname($this->getFilePath()).'/'.(new \ReflectionClass($this->getElasticsearchMakeTool()->getElasticsearchConfig()))->getShortName();
         mkdir($dirname);
         ob_start();
-        include __DIR__."/../MakeTool/ElasticsearchMakeToolUnit.Tpl.php";
+        include __DIR__.'/../MakeTool/ElasticsearchMakeToolUnit.Tpl.php';
         $content = ob_get_clean();
         file_put_contents($dirname.'/'.$this->getClassShortName().'ElasticsearchQuery.php', $content);
     }

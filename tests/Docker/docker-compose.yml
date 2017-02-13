@@ -2,9 +2,8 @@ version: '2'
 
 services:
   elasticsearch:
-    image: runelasticsearch
+    image: registry.cn-hangzhou.aliyuncs.com/xialintai/elasticsearch:latest
     volumes:
-      - ./elasticsearch/:/elasticsearch/
       - ../../:/opt/
     networks:
       comm:
@@ -12,7 +11,18 @@ services:
           - elasticsearch
     ports:
         - "9200:9200/tcp"
-    restart: always
+
+
+  kibana:
+    image: kibana:5.1.1
+    networks:
+      comm:
+        aliases:
+          - kibana
+    environment:
+      ELASTICSEARCH_URL: "http://elasticsearch:9200"
+    ports:
+        - "5601:5601/tcp"
 
 networks:
     comm:

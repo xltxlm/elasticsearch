@@ -20,7 +20,7 @@ class ElasticsearchQuery extends Elasticsearch
     /** @var string 返回结果的模型类 */
     protected $bodyString;
     /** @var string 返回的对象类型 */
-    protected $className = "";
+    protected $className = '';
     /** @var array 倒序排列的字段名称 */
     protected $OrderByDesc = [];
     /** @var array 正向排列的字段名称 */
@@ -38,11 +38,13 @@ class ElasticsearchQuery extends Elasticsearch
 
     /**
      * @param string $className
+     *
      * @return ElasticsearchQuery
      */
     public function setClassName(string $className): ElasticsearchQuery
     {
         $this->className = $className;
+
         return $this;
     }
 
@@ -147,7 +149,7 @@ class ElasticsearchQuery extends Elasticsearch
         $BodyObjects = [];
         foreach ($response['hits']['hits'] as $hit) {
             if ($this->getClassName() == \stdClass::class) {
-                $stdClass = new \stdClass;
+                $stdClass = new \stdClass();
                 foreach ($hit['_source'] as $key => $item) {
                     $stdClass->$key = $item;
                 }
@@ -188,6 +190,7 @@ class ElasticsearchQuery extends Elasticsearch
         }
         $this->pageObject->setTotal($response['hits']['total'])
             ->__invoke();
+
         return $BodyObjects;
     }
 }

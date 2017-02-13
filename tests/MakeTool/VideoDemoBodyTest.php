@@ -86,12 +86,6 @@ class VideoDemoBodyTest extends TestCase
             ->setPrepage(20);
 
         $tag = "手机";
-        //不带关键词,命中全部数据
-        $VideoDemoBodyElasticsearchQuery = (new VideoDemoBodyElasticsearchQuery())
-            ->setPageObject($pageObject)
-            ->where("")
-            ->__invoke();
-        $tag = "手机";
         $VideoDemoBodyElasticsearchQuery = (new VideoDemoBodyElasticsearchQuery())
             ->setPageObject($pageObject)
             ->where($tag)

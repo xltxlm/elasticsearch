@@ -8,8 +8,6 @@
 
 namespace xltxlm\elasticsearch;
 
-use Elasticsearch\ClientBuilder;
-
 /**
  * 获取一行数据
  * Class ElasticsearchGetOne.
