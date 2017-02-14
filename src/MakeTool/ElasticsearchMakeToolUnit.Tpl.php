@@ -44,7 +44,7 @@ final class <?=$this->getClassShortName()?>ElasticsearchQuery
             $query[] = sprintf('{"query_string": { "query": "%s"} }', $this->__string);
         }
         foreach ($this->__binds as $field => $bind) {
-            $query[] = sprintf('{ "%s":{ "%s":"%s" } }', $bind['action'], $field, $bind['string']);
+            $query[] = sprintf('{ "%s":{ "%s":"%s" } }', $bind['action'], $field, addslashes($bind['string']));
         }
         foreach ($this->__notin as $field => $bind) {
             $queryNotIn[] = $bind;
