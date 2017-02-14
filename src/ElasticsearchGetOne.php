@@ -15,7 +15,7 @@ namespace xltxlm\elasticsearch;
 class ElasticsearchGetOne extends Elasticsearch
 {
     /** @var string 返回结果的模型类 */
-    protected $bodyClass;
+    protected $bodyClass = "";
 
     /**
      * @return string
@@ -44,18 +44,21 @@ class ElasticsearchGetOne extends Elasticsearch
      */
     public function __invoke()
     {
-        try {
-            $index = $this->getElasticsearchConfig()->__invoke() +
-                [
-                    'id' => $this->getId(),
-                ];
-            $response = $this->getClient()->get($index);
 
-            return (new \ReflectionClass($this->getBodyClass()))
-                ->newInstance($response['_source']);
-        } catch (\Exception $e) {
-            return (new \ReflectionClass($this->getBodyClass()))
-                ->newInstance();
+        $index = $this->getElasticsearchConfig()->__invoke() +
+            [
+                'body' => '{"query":{ "match_phrase": { "_id":"'.$this->getId().'" }  } }'
+            ];
+        $response = $this->getClient()->search($index);
+        if ($this->getBodyClass()) {
+            try {
+                return (new \ReflectionClass($this->getBodyClass()))
+                    ->newInstance($response['_source']);
+            } catch (\Exception $e) {
+                return (new \ReflectionClass($this->getBodyClass()))
+                    ->newInstance();
+            }
         }
+        return $response;
     }
 }
