@@ -59,6 +59,6 @@ class ElasticsearchGetOne extends Elasticsearch
                     ->newInstance();
             }
         }
-        return $response;
+        return $response['hits']['hits'][0];
     }
 }
