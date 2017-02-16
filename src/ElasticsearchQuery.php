@@ -21,6 +21,10 @@ class ElasticsearchQuery extends Elasticsearch
     protected $bodyString;
     /** @var string 返回的对象类型 */
     protected $className = \stdClass::class;
+    /** @var array 倒序排列的字段名称 */
+    protected $OrderByDesc = [];
+    /** @var array 正向排列的字段名称 */
+    protected $OrderByAsc = [];
     /** @var PageObject 分页 */
     protected $pageObject;
 
@@ -84,6 +88,46 @@ class ElasticsearchQuery extends Elasticsearch
         return $this;
     }
 
+    /**
+     * @return array
+     */
+    public function getOrderByDesc(): array
+    {
+        return $this->OrderByDesc;
+    }
+
+    /**
+     * @param array $OrderByDesc
+     *
+     * @return ElasticsearchQuery
+     */
+    public function setOrderByDesc(array $OrderByDesc): ElasticsearchQuery
+    {
+        $this->OrderByDesc = $OrderByDesc;
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getOrderByAsc(): array
+    {
+        return $this->OrderByAsc;
+    }
+
+    /**
+     * @param array $OrderByAsc
+     *
+     * @return ElasticsearchQuery
+     */
+    public function setOrderByAsc(array $OrderByAsc): ElasticsearchQuery
+    {
+        $this->OrderByAsc = $OrderByAsc;
+
+        return $this;
+    }
+
     public function __invoke()
     {
         $index = $this->getElasticsearchConfig()->__invoke() +
@@ -98,10 +142,10 @@ class ElasticsearchQuery extends Elasticsearch
                 'size' => $this->getPageObject()->getPrepage(),
             ];
         }
-        $response = $this->getClient()->search($index);
         (new ElasticsearchRunLog())
             ->setQueryString($index)
             ->__invoke();
+        $response = $this->getClient()->search($index);
         $BodyObjects = [];
         foreach ($response['hits']['hits'] as $hit) {
             if ($this->getClassName() == \stdClass::class) {

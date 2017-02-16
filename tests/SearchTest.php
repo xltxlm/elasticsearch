@@ -10,12 +10,10 @@ namespace xltxlm\elasticsearch\tests;
 
 
 use PHPUnit\Framework\TestCase;
-use xltxlm\elasticsearch\ElasticsearchGetOne;
 use xltxlm\elasticsearch\ElasticsearchInsert;
-use xltxlm\elasticsearch\ElasticsearchSearch;
+use xltxlm\elasticsearch\ElasticsearchQuery;
 use xltxlm\elasticsearch\tests\Resource\VideoBaseConfig;
 use xltxlm\elasticsearch\tests\Resource\VideoDemoBody;
-use xltxlm\orm\PageObject;
 
 class SearchTest extends TestCase
 {
@@ -101,15 +99,15 @@ class SearchTest extends TestCase
         $searchVideoDemoBody = (new VideoDemoBody())
             ->setId(13);
 
-        /** @var VideoDemoBody[] $ElasticsearchSearch */
-        $ElasticsearchSearch = (new ElasticsearchSearch())
+        /** @var VideoDemoBody[] $ElasticsearchQuery */
+        $ElasticsearchQuery = (new ElasticsearchQuery())
             ->setElasticsearchConfig(new VideoBaseConfig())
             ->setBodyObject($searchVideoDemoBody)
             ->setTerm(true)
             ->setOrderByAsc($searchVideoDemoBody->varName($searchVideoDemoBody->getId()))
             ->__invoke();
         //1:返回结果不是空的
-        $this->assertEquals(1, count($ElasticsearchSearch));
+        $this->assertEquals(1, count($ElasticsearchQuery));
     }
 
     /**
@@ -121,13 +119,13 @@ class SearchTest extends TestCase
         $searchVideoDemoBody = (new VideoDemoBody())
             ->setTitle("南");
 
-        /** @var VideoDemoBody[] $ElasticsearchSearch */
-        $ElasticsearchSearch = (new ElasticsearchSearch())
+        /** @var VideoDemoBody[] $ElasticsearchQuery */
+        $ElasticsearchQuery = (new ElasticsearchQuery())
             ->setElasticsearchConfig(new VideoBaseConfig())
             ->setBodyObject($searchVideoDemoBody)
             ->__invoke();
         //1:返回结果不是空的
-        $this->assertGreaterThan(1, count($ElasticsearchSearch));
+        $this->assertGreaterThan(1, count($ElasticsearchQuery));
     }
 
     /**
@@ -139,17 +137,17 @@ class SearchTest extends TestCase
         $searchVideoDemoBody = (new VideoDemoBody())
             ->setTitle("南京");
 
-        /** @var VideoDemoBody[] $ElasticsearchSearch */
-        $ElasticsearchSearch = (new ElasticsearchSearch())
+        /** @var VideoDemoBody[] $ElasticsearchQuery */
+        $ElasticsearchQuery = (new ElasticsearchQuery())
             ->setElasticsearchConfig(new VideoBaseConfig())
             ->setBodyObject($searchVideoDemoBody)
             ->setOrderByDesc($searchVideoDemoBody->varName($searchVideoDemoBody->getId()))
             ->__invoke();
         //1:返回结果不是空的
-        $this->assertGreaterThan(1, count($ElasticsearchSearch));
+        $this->assertGreaterThan(1, count($ElasticsearchQuery));
         //2:结果的id 一个比下一个大
         $oldid = null;
-        foreach ($ElasticsearchSearch as $item) {
+        foreach ($ElasticsearchQuery as $item) {
             if ($oldid) {
                 $this->assertGreaterThan($item->getId(), $oldid);
             }
@@ -166,17 +164,17 @@ class SearchTest extends TestCase
         $searchVideoDemoBody = (new VideoDemoBody())
             ->setTitle("南京");
 
-        /** @var VideoDemoBody[] $ElasticsearchSearch */
-        $ElasticsearchSearch = (new ElasticsearchSearch())
+        /** @var VideoDemoBody[] $ElasticsearchQuery */
+        $ElasticsearchQuery = (new ElasticsearchQuery())
             ->setElasticsearchConfig(new VideoBaseConfig())
             ->setBodyObject($searchVideoDemoBody)
             ->setOrderByAsc($searchVideoDemoBody->varName($searchVideoDemoBody->getId()))
             ->__invoke();
         //1:返回结果不是空的
-        $this->assertGreaterThan(1, count($ElasticsearchSearch));
+        $this->assertGreaterThan(1, count($ElasticsearchQuery));
         //2:结果的id 一个比下一个大
         $oldid = null;
-        foreach ($ElasticsearchSearch as $item) {
+        foreach ($ElasticsearchQuery as $item) {
             if ($oldid) {
                 $this->assertGreaterThan($oldid, $item->getId());
             }
@@ -197,43 +195,43 @@ class SearchTest extends TestCase
             ->setPageID(1)
             ->setPrepage(1);
 
-        /** @var VideoDemoBody[] $ElasticsearchSearch1 */
-        $ElasticsearchSearch1 = (new ElasticsearchSearch())
+        /** @var VideoDemoBody[] $ElasticsearchQuery1 */
+        $ElasticsearchQuery1 = (new ElasticsearchQuery())
             ->setElasticsearchConfig(new VideoBaseConfig())
             ->setBodyObject($searchVideoDemoBody)
             ->setOrderByAsc($searchVideoDemoBody->varName($searchVideoDemoBody->getId()))
             ->setPageObject($pageObject)
             ->__invoke();
-        $this->assertEquals(1, count($ElasticsearchSearch1));
+        $this->assertEquals(1, count($ElasticsearchQuery1));
 
         $pageObject = (new PageObject())
             ->setPageID(2)
             ->setPrepage(1);
 
-        /** @var VideoDemoBody[] $ElasticsearchSearch2 */
-        $ElasticsearchSearch2 = (new ElasticsearchSearch())
+        /** @var VideoDemoBody[] $ElasticsearchQuery2 */
+        $ElasticsearchQuery2 = (new ElasticsearchQuery())
             ->setElasticsearchConfig(new VideoBaseConfig())
             ->setBodyObject($searchVideoDemoBody)
             ->setOrderByAsc($searchVideoDemoBody->varName($searchVideoDemoBody->getId()))
             ->setPageObject($pageObject)
             ->__invoke();
         //1:返回结果不是空的
-        $this->assertEquals(1, count($ElasticsearchSearch2));
-        $this->assertGreaterThan($ElasticsearchSearch1[0]->getId(), $ElasticsearchSearch2[0]->getId());
+        $this->assertEquals(1, count($ElasticsearchQuery2));
+        $this->assertGreaterThan($ElasticsearchQuery1[0]->getId(), $ElasticsearchQuery2[0]->getId());
 
         //分页超出范围
         $pageObject = (new PageObject())
             ->setPageID(300)
             ->setPrepage(1);
 
-        /** @var VideoDemoBody[] $ElasticsearchSearch2 */
-        $ElasticsearchSearch3 = (new ElasticsearchSearch())
+        /** @var VideoDemoBody[] $ElasticsearchQuery2 */
+        $ElasticsearchQuery3 = (new ElasticsearchQuery())
             ->setElasticsearchConfig(new VideoBaseConfig())
             ->setBodyObject($searchVideoDemoBody)
             ->setOrderByAsc($searchVideoDemoBody->varName($searchVideoDemoBody->getId()))
             ->setPageObject($pageObject)
             ->__invoke();
-        $this->assertEmpty($ElasticsearchSearch3);
+        $this->assertEmpty($ElasticsearchQuery3);
     }
 
     /**
@@ -245,10 +243,10 @@ class SearchTest extends TestCase
             ->setTitle("南京")
             ->setId(13);
 
-        $ElasticsearchSearch = (new ElasticsearchSearch())
+        $ElasticsearchQuery = (new ElasticsearchQuery())
             ->setElasticsearchConfig(new VideoBaseConfig())
             ->setBodyObject($searchVideoDemoBody)
             ->__invoke();
-        $this->assertEquals(count($ElasticsearchSearch), 1);
+        $this->assertEquals(count($ElasticsearchQuery), 1);
     }
 }

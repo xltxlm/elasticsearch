@@ -9,10 +9,13 @@
   ],
   "require": {
     "php": ">=7.0",
+    "ext-mbstring": "*",
+    "overtrue/pinyin": "~3.0",
     "xltxlm/logger": "*",
     "xltxlm/helper": "*",
     "xltxlm/page": "*",
     "xltxlm/config": "*",
+    "xltxlm/guzzlehttp": "*",
     "elasticsearch/elasticsearch": "~v5."
   },
   "require-dev": {
