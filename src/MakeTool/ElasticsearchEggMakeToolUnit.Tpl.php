@@ -5,12 +5,12 @@ namespace <?=$this->getNameSpace()?>\<?=(new \ReflectionClass($this->getElastics
 
 use xltxlm\elasticsearch\ElasticsearchQuery;
 use \xltxlm\elasticsearch\Unit\ElasticsearchAction;
-use xltxlm\page\PageObject;
 use <?=(new \ReflectionClass($this->getElasticsearchMakeTool()->getElasticsearchConfig()))->getName()?>;
-use <?=$this->getClassName()?>;
 
-final class <?=$this->getClassShortName()?>ElasticsearchQuery
+final class <?=$this->getClassShortName()?>ElasticsearchEgg
 {
+    public const DAY='day';
+    public const HOUR='hour';
     /** @var array 查询的内容  */
     protected $__binds = [];
     /** @var array 区间范围  */
@@ -23,8 +23,12 @@ final class <?=$this->getClassShortName()?>ElasticsearchQuery
     /** @var string 模糊检索的字符串  */
     protected $__string = "";
 
-    /** @var  PageObject */
-    protected $pageObject;
+    /** @var string 要分组的字段 */
+    protected $eggField = "";
+    /** @var string 分组的日期字段 */
+    protected $eggDayField = "";
+    /** @var string x轴时间纬度,默认是按天 */
+    protected $eggDayType = self::DAY;
 
     /** @var ElasticsearchQuery */
     protected $ElasticsearchQuery;
@@ -36,6 +40,60 @@ final class <?=$this->getClassShortName()?>ElasticsearchQuery
     {
         return $this->ElasticsearchQuery;
     }
+
+    /**
+     * @return string
+     */
+    public function getEggDayField(): string
+    {
+        return $this->eggDayField;
+    }
+
+    /**
+     * @param string $eggDayField
+     * @return static
+     */
+    public function setEggDayField(string $eggDayField)
+    {
+        $this->eggDayField = $eggDayField;
+        return $this;
+    }
+    /**
+     * @return string
+     */
+    public function getEggField(): string
+    {
+        return $this->eggField;
+    }
+
+    /**
+     * @param string $eggField
+     * @return static
+     */
+    public function setEggField(string $eggField)
+    {
+        $this->eggField = $eggField;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getEggDayType(): string
+    {
+        return $this->eggDayType;
+    }
+
+    /**
+     * @param string $eggDayType
+     * @return static
+     */
+    public function setEggDayType(string $eggDayType)
+    {
+        $this->eggDayType = $eggDayType;
+        return $this;
+    }
+
     /**
      * @return \<?=$this->getClassName()?>[]
      */
@@ -62,7 +120,24 @@ final class <?=$this->getClassShortName()?>ElasticsearchQuery
             $queryNotIn[] = $bind;
         }
 
+        if($this->getEggDayType() == self::DAY)
+        {
+            $date_histogram='
+                "field": "'.$this->getEggDayField().'",
+                "format": "yyyy-mm-dd",
+                "interval": "day"
+            ';
+        }else
+        {
+            $date_histogram='
+            "field": "'.$this->getEggDayField().'",
+            "format": "yyyy-mm-dd HH",
+            "interval": "hour"
+            ';
+        }
+
         $bodyString = '{
+                "size":0,
                 "query": {
                     "bool": {
                          "must":
@@ -75,34 +150,27 @@ final class <?=$this->getClassShortName()?>ElasticsearchQuery
                         ]
                     }
                 }'.$sort.'
+                 ,"aggs": {
+                    "all_interests": {
+                      "terms": {
+                        "field": "'.$this->getEggField().'"
+                      },
+                      "aggs": {
+                        "daysbuckets": {
+                          "date_histogram": { '.$date_histogram.' }
+                        }
+                      }
+                    }
+                  }
             }';
 
         $this->ElasticsearchQuery=(new ElasticsearchQuery());
         return $this->ElasticsearchQuery
             ->setElasticsearchConfig(new <?=(new \ReflectionClass($this->getElasticsearchMakeTool()->getElasticsearchConfig()))->getShortName()?>)
-            ->setClassName(<?=(new \ReflectionClass($this->getClassName()))->getShortName()?>::class)
-            //由于下面有踢出结果的操作,查询结果放大3倍
-            ->setPageObject($this->getPageObject())
+            ->setEgg(true)
             ->setBodyString($bodyString)
             ->__invoke();
 
-    }
-    /**
-     * @return PageObject
-     */
-    public function getPageObject(): PageObject
-    {
-        return $this->pageObject;
-    }
-
-    /**
-     * @param PageObject $pageObject
-     * @return static
-     */
-    public function setPageObject(PageObject $pageObject)
-    {
-        $this->pageObject = $pageObject;
-        return $this;
     }
 
     /**

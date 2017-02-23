@@ -160,5 +160,10 @@ class ElasticsearchMakeToolUnit
         include __DIR__.'/../MakeTool/ElasticsearchMakeToolUnit.Tpl.php';
         $content = ob_get_clean();
         file_put_contents($dirname.'/'.$this->getClassShortName().'ElasticsearchQuery.php', $content);
+
+        ob_start();
+        include __DIR__.'/../MakeTool/ElasticsearchEggMakeToolUnit.Tpl.php';
+        $content = ob_get_clean();
+        file_put_contents($dirname.'/'.$this->getClassShortName().'ElasticsearchEgg.php', $content);
     }
 }

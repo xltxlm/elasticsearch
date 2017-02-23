@@ -8,7 +8,6 @@
 
 namespace xltxlm\elasticsearch\Unit;
 
-use xltxlm\helper\Hclass\CopyObjectAttributeName;
 use xltxlm\helper\Hclass\LoadFromArray;
 use xltxlm\helper\Hclass\ObjectToArray;
 
@@ -20,5 +19,4 @@ abstract class ElasticsearchModel
 {
     use LoadFromArray;
     use ObjectToArray;
-    use CopyObjectAttributeName;
 }

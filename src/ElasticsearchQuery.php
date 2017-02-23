@@ -9,6 +9,9 @@
 namespace xltxlm\elasticsearch;
 
 use xltxlm\elasticsearch\Logger\ElasticsearchRunLog;
+use xltxlm\elk\vendor\xltxlm\elasticsearch\src\Unit\EggDayModel;
+use xltxlm\elk\vendor\xltxlm\elasticsearch\src\Unit\EggName2DayModel;
+use xltxlm\elk\vendor\xltxlm\elasticsearch\src\Unit\EggNameModel;
 use xltxlm\page\PageObject;
 
 /**
@@ -17,16 +20,39 @@ use xltxlm\page\PageObject;
  */
 class ElasticsearchQuery extends Elasticsearch
 {
+    /** @var eggNameModel[] */
+    protected $eggNameModels = [];
+    /** @var eggDayModel[] */
+    protected $eggDayModels = [];
+    /** @var array EggName2DayModel */
+    protected $EggName2DayModels = [];
     /** @var string 返回结果的模型类 */
     protected $bodyString;
     /** @var string 返回的对象类型 */
     protected $className = \stdClass::class;
-    /** @var array 倒序排列的字段名称 */
-    protected $OrderByDesc = [];
-    /** @var array 正向排列的字段名称 */
-    protected $OrderByAsc = [];
     /** @var PageObject 分页 */
     protected $pageObject;
+    /** @var bool 是否是统计分析数据 */
+    protected $egg = false;
+
+    /**
+     * @return bool
+     */
+    public function isEgg(): bool
+    {
+        return $this->egg;
+    }
+
+    /**
+     * @param bool $egg
+     * @return ElasticsearchQuery
+     */
+    public function setEgg(bool $egg): ElasticsearchQuery
+    {
+        $this->egg = $egg;
+        return $this;
+    }
+
 
     /**
      * @return string
@@ -89,44 +115,29 @@ class ElasticsearchQuery extends Elasticsearch
     }
 
     /**
-     * @return array
+     * @return eggNameModel[]
      */
-    public function getOrderByDesc(): array
+    public function getEggNameModels(): array
     {
-        return $this->OrderByDesc;
+        return $this->eggNameModels;
     }
 
     /**
-     * @param array $OrderByDesc
-     *
-     * @return ElasticsearchQuery
+     * @return EggDayModel[]
      */
-    public function setOrderByDesc(array $OrderByDesc): ElasticsearchQuery
+    public function getEggDayModels(): array
     {
-        $this->OrderByDesc = $OrderByDesc;
-
-        return $this;
+        return $this->eggDayModels;
     }
 
     /**
-     * @return array
+     * @return EggName2DayModel[]
      */
-    public function getOrderByAsc(): array
+    public function getEggName2DayModels(): array
     {
-        return $this->OrderByAsc;
+        return $this->EggName2DayModels;
     }
 
-    /**
-     * @param array $OrderByAsc
-     *
-     * @return ElasticsearchQuery
-     */
-    public function setOrderByAsc(array $OrderByAsc): ElasticsearchQuery
-    {
-        $this->OrderByAsc = $OrderByAsc;
-
-        return $this;
-    }
 
     public function __invoke()
     {
@@ -146,6 +157,42 @@ class ElasticsearchQuery extends Elasticsearch
             ->setQueryString($index)
             ->__invoke();
         $response = $this->getClient()->search($index);
+        if ($this->isEgg()) {
+            $this->egg($response);
+            return $this->getEggNameModels();
+        } else {
+            return $this->monal($response);
+        }
+    }
+
+    private function egg($response)
+    {
+        $buckets = $response['aggregations']['all_interests']['buckets'];
+        foreach ($buckets as $item) {
+            $name = $item['key'];
+            $this->eggNameModels[] = (new EggNameModel)
+                ->setName($name);
+
+            foreach ($item['daysbuckets']['buckets'] as $daysbucket) {
+                $day = $daysbucket['key_as_string'];
+                $this->eggDayModels[$day] = $this->eggDayModels[$day]??(new EggDayModel)
+                        ->setDay($day);
+
+                $this->EggName2DayModels[$name.$day] = (new EggName2DayModel())
+                    ->setName($name)
+                    ->setDay($day)
+                    ->setNum($daysbucket['doc_count']);
+            }
+        }
+        //日期进行排序整理
+        krsort($this->eggDayModels);
+    }
+
+    /**
+     * 常规的查询
+     */
+    private function monal($response)
+    {
         $BodyObjects = [];
         foreach ($response['hits']['hits'] as $hit) {
             if ($this->getClassName() == \stdClass::class) {
@@ -190,7 +237,6 @@ class ElasticsearchQuery extends Elasticsearch
         }
         $this->pageObject->setTotal($response['hits']['total'])
             ->__invoke();
-
         return $BodyObjects;
     }
 }
