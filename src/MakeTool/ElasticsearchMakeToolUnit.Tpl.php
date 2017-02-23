@@ -126,13 +126,15 @@ foreach ($Properties as $property) {
     if ($property->getName()[0] == '_' && $property->getName()[1] == '_') {
         continue;
     } ?>
-    /**
+        /**
     * @param string $<?=$property->getName()?>
 
     * @param string $action
+    * @param string $explode
+    * @param string|bool $timeZone
     * @return static
     */
-    public function where<?=ucfirst($property->getName())?>($<?=$property->getName()?>,$action=ElasticsearchAction::EQUAL, $explode=" - ")
+    public function where<?=ucfirst($property->getName())?>($<?=$property->getName()?>,$action=ElasticsearchAction::EQUAL, $explode=" - ",$timeZone=false)
     {
         $<?=$property->getName()?>=is_string($<?=$property->getName()?>)?trim($<?=$property->getName()?>):$<?=$property->getName()?>;
         if(empty($<?=$property->getName()?>))
@@ -156,7 +158,13 @@ foreach ($Properties as $property) {
         {
             list($ltval,$gtval)=explode($explode,$<?=$property->getName()?>);
             list($lt,$gt)=explode("|",$action);
-            $this->__ranges['<?=$property->getName()?>'] = sprintf('{ "range":{ "<?=$property->getName()?>":{ "%s":"%s","%s":"%s" } } }',  $lt,$ltval,$gt,$gtval);
+            if($timeZone)
+            {
+                $this->__ranges['<?=$property->getName()?>'] = sprintf('{ "range":{ "<?=$property->getName()?>":{ "%s":"%s","%s":"%s","time_zone":"%s" } } }',  $lt,$ltval,$gt,$gtval,$timeZone);
+            }else
+            {
+                $this->__ranges['<?=$property->getName()?>'] = sprintf('{ "range":{ "<?=$property->getName()?>":{ "%s":"%s","%s":"%s" } } }',  $lt,$ltval,$gt,$gtval);
+            }
         }
         return $this;
     }

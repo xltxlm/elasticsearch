@@ -18,6 +18,10 @@ use xltxlm\elasticsearch\Unit\ElasticsearchConfig;
  */
 abstract class Elasticsearch
 {
+
+    public const DAY='day';
+    public const HOUR='hour';
+
     /** @var ElasticsearchConfig */
     protected $elasticsearchConfig;
     /** @var string id,也就是数据库的自增id */

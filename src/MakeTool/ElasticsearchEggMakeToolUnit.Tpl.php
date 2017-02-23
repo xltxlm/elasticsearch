@@ -3,14 +3,13 @@
 
 namespace <?=$this->getNameSpace()?>\<?=(new \ReflectionClass($this->getElasticsearchMakeTool()->getElasticsearchConfig()))->getShortName()?>;
 
+use \xltxlm\elasticsearch\Elasticsearch;
 use xltxlm\elasticsearch\ElasticsearchQuery;
 use \xltxlm\elasticsearch\Unit\ElasticsearchAction;
 use <?=(new \ReflectionClass($this->getElasticsearchMakeTool()->getElasticsearchConfig()))->getName()?>;
 
 final class <?=$this->getClassShortName()?>ElasticsearchEgg
 {
-    public const DAY='day';
-    public const HOUR='hour';
     /** @var array 查询的内容  */
     protected $__binds = [];
     /** @var array 区间范围  */
@@ -28,7 +27,7 @@ final class <?=$this->getClassShortName()?>ElasticsearchEgg
     /** @var string 分组的日期字段 */
     protected $eggDayField = "";
     /** @var string x轴时间纬度,默认是按天 */
-    protected $eggDayType = self::DAY;
+    protected $eggDayType = Elasticsearch::DAY;
 
     /** @var ElasticsearchQuery */
     protected $ElasticsearchQuery;
@@ -120,19 +119,21 @@ final class <?=$this->getClassShortName()?>ElasticsearchEgg
             $queryNotIn[] = $bind;
         }
 
-        if($this->getEggDayType() == self::DAY)
+        if($this->getEggDayType() == Elasticsearch::DAY)
         {
             $date_histogram='
                 "field": "'.$this->getEggDayField().'",
-                "format": "yyyy-mm-dd",
-                "interval": "day"
+                "format": "yyyy-MM-dd",
+                "interval": "day",
+                "time_zone": "+08:00"
             ';
         }else
         {
             $date_histogram='
             "field": "'.$this->getEggDayField().'",
-            "format": "yyyy-mm-dd HH",
-            "interval": "hour"
+            "format": "yyyy-MM-dd HH",
+            "interval": "hour",
+            "time_zone": "+08:00"
             ';
         }
 
@@ -198,9 +199,11 @@ foreach ($Properties as $property) {
     * @param string $<?=$property->getName()?>
 
     * @param string $action
+    * @param string $explode
+    * @param string|bool $timeZone
     * @return static
     */
-    public function where<?=ucfirst($property->getName())?>($<?=$property->getName()?>,$action=ElasticsearchAction::EQUAL, $explode=" - ")
+    public function where<?=ucfirst($property->getName())?>($<?=$property->getName()?>,$action=ElasticsearchAction::EQUAL, $explode=" - ",$timeZone=false)
     {
         $<?=$property->getName()?>=is_string($<?=$property->getName()?>)?trim($<?=$property->getName()?>):$<?=$property->getName()?>;
         if(empty($<?=$property->getName()?>))
@@ -224,7 +227,13 @@ foreach ($Properties as $property) {
         {
             list($ltval,$gtval)=explode($explode,$<?=$property->getName()?>);
             list($lt,$gt)=explode("|",$action);
-            $this->__ranges['<?=$property->getName()?>'] = sprintf('{ "range":{ "<?=$property->getName()?>":{ "%s":"%s","%s":"%s" } } }',  $lt,$ltval,$gt,$gtval);
+            if($timeZone)
+            {
+                $this->__ranges['<?=$property->getName()?>'] = sprintf('{ "range":{ "<?=$property->getName()?>":{ "%s":"%s","%s":"%s","time_zone":"%s" } } }',  $lt,$ltval,$gt,$gtval,$timeZone);
+            }else
+            {
+                $this->__ranges['<?=$property->getName()?>'] = sprintf('{ "range":{ "<?=$property->getName()?>":{ "%s":"%s","%s":"%s" } } }',  $lt,$ltval,$gt,$gtval);
+            }
         }
         return $this;
     }
