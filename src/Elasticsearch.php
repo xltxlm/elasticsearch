@@ -21,6 +21,8 @@ abstract class Elasticsearch
 
     public const DAY='day';
     public const HOUR='hour';
+    public const MINUTE='minute';
+    public const SECOND='second';
 
     /** @var ElasticsearchConfig */
     protected $elasticsearchConfig;
