@@ -10,6 +10,7 @@ namespace xltxlm\elasticsearch\Logger;
 
 use xltxlm\elasticsearch\Elasticsearch;
 use xltxlm\elasticsearch\Unit\ElasticsearchConfig;
+use xltxlm\helper\Hclass\ConvertObject;
 use xltxlm\logger\Log\DefineLog;
 
 /**
@@ -25,10 +26,13 @@ class ElasticsearchConnectLogger extends DefineLog
      * 当前记录的类算在运行类身上,不是orm
      * PdoRunLog constructor.
      */
-    public function __construct()
+    public function __construct($ElasticsearchConfig = null)
     {
         parent::__construct();
         $this->setReource(Elasticsearch::class);
+        if ($ElasticsearchConfig) {
+            $this->setElasticsearchConfig($ElasticsearchConfig);
+        }
     }
 
     /**
@@ -46,7 +50,13 @@ class ElasticsearchConnectLogger extends DefineLog
      */
     public function setElasticsearchConfig(ElasticsearchConfig $ElasticsearchConfig): ElasticsearchConnectLogger
     {
-        $this->ElasticsearchConfig = $ElasticsearchConfig;
+        if (strpos(get_class($ElasticsearchConfig), 'class@anonymous') !== false) {
+            $this->ElasticsearchConfig = (new ConvertObject())
+                ->setObject($ElasticsearchConfig)
+                ->toArray();
+        } else {
+            $this->ElasticsearchConfig = $ElasticsearchConfig;
+        }
 
         return $this;
     }

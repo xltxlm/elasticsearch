@@ -102,8 +102,8 @@ class ElasticsearchSuggest extends Elasticsearch
             ];
 
         $response = $this->getClient()->search($index);
-        (new ElasticsearchRunLog())
-            ->setQueryString($index)
+        (new ElasticsearchRunLog($this->getElasticsearchConfig()))
+            ->setElasticsearchQueryString($index)
             ->__invoke();
         $data = [];
         foreach ($response['suggest']['tag-suggest'][0]['options'] as $hit) {

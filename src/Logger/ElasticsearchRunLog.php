@@ -11,24 +11,24 @@ namespace xltxlm\elasticsearch\Logger;
 class ElasticsearchRunLog extends ElasticsearchConnectLogger
 {
     /** @var array 查询语句 */
-    protected $queryString = [];
+    protected $ElasticsearchQueryString = [];
 
     /**
      * @return array
      */
-    public function getQueryString(): array
+    public function getElasticsearchQueryString(): array
     {
-        return $this->queryString;
+        return $this->ElasticsearchQueryString;
     }
 
     /**
-     * @param array $queryString
+     * @param array $ElasticsearchQueryString
      *
      * @return ElasticsearchRunLog
      */
-    public function setQueryString(array $queryString): ElasticsearchRunLog
+    public function setElasticsearchQueryString(array $ElasticsearchQueryString): ElasticsearchRunLog
     {
-        $this->queryString = $queryString;
+        $this->ElasticsearchQueryString = $ElasticsearchQueryString;
 
         return $this;
     }

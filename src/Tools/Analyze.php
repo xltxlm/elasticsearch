@@ -6,7 +6,7 @@
  * Time: 13:08.
  */
 
-namespace xltxlm\elk\vendor\xltxlm\elasticsearch\src\Tools;
+namespace xltxlm\elk\vendor\xltxlm\elasticsearch\Tools;
 
 use Overtrue\Pinyin\Pinyin;
 use xltxlm\elasticsearch\Unit\ElasticsearchConfig;

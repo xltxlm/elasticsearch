@@ -12,6 +12,8 @@ use xltxlm\elasticsearch\Logger\ElasticsearchRunLog;
 use xltxlm\elk\vendor\xltxlm\elasticsearch\src\Unit\EggDayModel;
 use xltxlm\elk\vendor\xltxlm\elasticsearch\src\Unit\EggName2DayModel;
 use xltxlm\elk\vendor\xltxlm\elasticsearch\src\Unit\EggNameModel;
+use xltxlm\helper\Hclass\ChangeTo1Array;
+use xltxlm\helper\Hclass\ConvertObject;
 use xltxlm\page\PageObject;
 
 /**
@@ -34,6 +36,26 @@ class ElasticsearchQuery extends Elasticsearch
     protected $pageObject;
     /** @var bool 是否是统计分析数据 */
     protected $egg = false;
+    /** @var bool 是否将结果转换成一维数组 */
+    protected $to1Array = false;
+
+    /**
+     * @return bool
+     */
+    public function isTo1Array(): bool
+    {
+        return $this->to1Array;
+    }
+
+    /**
+     * @param bool $to1Array
+     * @return ElasticsearchQuery
+     */
+    public function setTo1Array(bool $to1Array): ElasticsearchQuery
+    {
+        $this->to1Array = $to1Array;
+        return $this;
+    }
 
     /**
      * @return bool
@@ -153,8 +175,8 @@ class ElasticsearchQuery extends Elasticsearch
                 'size' => $this->getPageObject()->getPrepage(),
             ];
         }
-        (new ElasticsearchRunLog())
-            ->setQueryString($index)
+        (new ElasticsearchRunLog($this->getElasticsearchConfig()))
+            ->setElasticsearchQueryString($index)
             ->__invoke();
         $response = $this->getClient()->search($index);
         if ($this->isEgg()) {
@@ -237,6 +259,17 @@ class ElasticsearchQuery extends Elasticsearch
         }
         $this->pageObject->setTotal($response['hits']['total'])
             ->__invoke();
+        if ($this->isTo1Array()) {
+            foreach ($BodyObjects as &$bodyObject) {
+                if ($this->getClassName() != \stdClass::class) {
+                    $bodyObject = (new ConvertObject)
+                        ->setObject($bodyObject)
+                        ->toArray();
+                } else {
+                    $bodyObject = get_object_vars($bodyObject);
+                }
+            }
+        }
         return $BodyObjects;
     }
 }
