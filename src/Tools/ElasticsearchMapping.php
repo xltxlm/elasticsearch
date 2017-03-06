@@ -71,7 +71,7 @@ class ElasticsearchMapping
         $this->mapping($tokenizer);
         $tokenizer = current(current(current($tokenizer)));
         //把多为数组转换成一维数组
-        if ($this->isTo1Array()) {
+        if ($this->isTo1Array() && is_array($tokenizer)) {
             return (new ChangeTo1Array)
                 ->setArray($tokenizer)
                 ->__invoke();
