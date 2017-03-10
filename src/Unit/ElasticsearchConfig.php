@@ -26,7 +26,7 @@ abstract class ElasticsearchConfig implements TestConfig
     /** @var string 索引,也就是数据库名称 */
     protected $index = '';
     /** @var string 类型,也就是表 */
-    protected $type = '';
+    protected $type = 'data';
     /** @var string 开启http认账的账户 */
     protected $user = '';
     /** @var string 开启http认证的密码 */
