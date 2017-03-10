@@ -154,16 +154,10 @@ class ElasticsearchMakeToolUnit
 
     public function __invoke()
     {
-        $dirname = dirname($this->getFilePath()).'/'.(new \ReflectionClass($this->getElasticsearchMakeTool()->getElasticsearchConfig()))->getShortName();
-        mkdir($dirname);
+        $dirname = dirname($this->getFilePath());
         ob_start();
         include __DIR__.'/../MakeTool/ElasticsearchMakeToolUnit.Tpl.php';
         $content = ob_get_clean();
         file_put_contents($dirname.'/'.$this->getClassShortName().'ElasticsearchQuery.php', $content);
-
-        ob_start();
-        include __DIR__.'/../MakeTool/ElasticsearchEggMakeToolUnit.Tpl.php';
-        $content = ob_get_clean();
-        file_put_contents($dirname.'/'.$this->getClassShortName().'ElasticsearchEgg.php', $content);
     }
 }
