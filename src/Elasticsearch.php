@@ -47,6 +47,7 @@ abstract class Elasticsearch
             self::$client[$configSign] = ClientBuilder::create()
                 ->setHosts([$config])
                 ->build();
+            //记录日志
             (new ElasticsearchConnectLogger())
                 ->setElasticsearchConfig($this->getElasticsearchConfig())
                 ->__invoke();

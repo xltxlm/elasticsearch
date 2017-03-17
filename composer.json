@@ -18,9 +18,6 @@
     "xltxlm/guzzlehttp": "*",
     "elasticsearch/elasticsearch": "~v5."
   },
-  "require-dev": {
-    "xltxlm/scrutinizer": "*"
-  },
   "autoload": {
     "psr-4": {
       "xltxlm\\elasticsearch\\": [
