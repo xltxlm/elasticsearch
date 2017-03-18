@@ -9,6 +9,15 @@ services:
       comm:
         aliases:
           - elasticsearch
+
+  nginx:
+    image: registry.cn-hangzhou.aliyuncs.com/xialintai/nginx
+    volumes:
+        - ./nginx:/etc/nginx/conf.d/
+    networks:
+      comm:
+        aliases:
+          - nginx
     ports:
         - "9200:9200/tcp"
 
