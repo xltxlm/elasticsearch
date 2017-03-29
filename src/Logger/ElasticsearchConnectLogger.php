@@ -11,13 +11,14 @@ namespace xltxlm\elasticsearch\Logger;
 use xltxlm\elasticsearch\Elasticsearch;
 use xltxlm\elasticsearch\Unit\ElasticsearchConfig;
 use xltxlm\helper\Hclass\ConvertObject;
+use xltxlm\logger\Log\BasicLog;
 use xltxlm\logger\Log\DefineLog;
 
 /**
  * 链接记录
  * Class ElasticsearchConnectLogger.
  */
-class ElasticsearchConnectLogger extends DefineLog
+class ElasticsearchConnectLogger extends BasicLog
 {
     /** @var ElasticsearchConfig */
     protected $ElasticsearchConfig;

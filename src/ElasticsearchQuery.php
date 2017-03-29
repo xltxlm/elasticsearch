@@ -8,6 +8,7 @@
 
 namespace xltxlm\elasticsearch;
 
+use Psr\Log\LogLevel;
 use xltxlm\elasticsearch\Logger\ElasticsearchRunLog;
 use xltxlm\elk\vendor\xltxlm\elasticsearch\src\Unit\EggDayModel;
 use xltxlm\elk\vendor\xltxlm\elasticsearch\src\Unit\EggName2DayModel;
@@ -175,16 +176,27 @@ class ElasticsearchQuery extends Elasticsearch
                 'size' => $this->getPageObject()->getPrepage(),
             ];
         }
-        (new ElasticsearchRunLog($this->getElasticsearchConfig()))
-            ->setElasticsearchQueryString($index)
-            ->__invoke();
-        $response = $this->getClient()->search($index);
-        if ($this->isEgg()) {
-            $this->egg($response);
-            return $this->getEggNameModels();
-        } else {
-            return $this->monal($response);
+        $elasticsearchRunLog = (new ElasticsearchRunLog($this->getElasticsearchConfig()))
+            ->setElasticsearchQueryString($index);
+
+        try {
+            $response = $this->getClient()->search($index);
+
+            if ($this->isEgg()) {
+                $this->egg($response);
+                return $this->getEggNameModels();
+            } else {
+                return $this->monal($response);
+            }
+        } catch (\Exception $e) {
+            $elasticsearchRunLog
+                ->setMessageDescribe($e->getMessage())
+                ->setType(LogLevel::ERROR);
+        } finally {
+            $elasticsearchRunLog
+                ->__invoke();
         }
+        return null;
     }
 
     private function egg($response)

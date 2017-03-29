@@ -184,12 +184,13 @@ abstract class ElasticsearchConfig implements TestConfig
     {
         $pageObject = new PageObject();
 
-        return (new ElasticsearchQuery())
+        $eggNameModels = (new ElasticsearchQuery())
             ->setElasticsearchConfig(new static())
             ->setClassName(\stdClass::class)
             ->setPageObject($pageObject)
             ->setBodyString('')
             ->__invoke();
+        return $eggNameModels;
     }
 
     /**
