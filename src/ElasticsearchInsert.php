@@ -53,7 +53,11 @@ final class ElasticsearchInsert extends Elasticsearch
                         'elasticsearch_update_time' => date('c'),
                     ],
             ];
-        $this->getClient()->index($index);
+        try {
+            $this->getClient()->index($index);
+        } catch (\Exception $e) {
+            throw new \Exception($e->getMessage().json_encode($index, JSON_UNESCAPED_UNICODE));
+        }
 
         return true;
     }
