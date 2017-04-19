@@ -10,6 +10,7 @@ namespace xltxlm\elasticsearch\Unit;
 
 use xltxlm\config\TestConfig;
 use xltxlm\elasticsearch\ElasticsearchQuery;
+use xltxlm\helper\Hclass\ObjectToJson;
 use xltxlm\page\PageObject;
 
 /**
@@ -18,6 +19,7 @@ use xltxlm\page\PageObject;
  */
 abstract class ElasticsearchConfig implements TestConfig
 {
+    use ObjectToJson;
     /** @var string 服务器ip地址 */
     protected $host = '127.0.0.1';
     /** @var int 服务器端口 */

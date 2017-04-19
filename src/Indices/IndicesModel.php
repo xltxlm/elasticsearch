@@ -8,7 +8,6 @@
 
 namespace xltxlm\elasticsearch\Indices;
 
-use xltxlm\elasticsearch\ElasticsearchClient;
 use xltxlm\elasticsearch\Unit\ElasticsearchConfig;
 use xltxlm\guzzlehttp\Get;
 
@@ -166,6 +165,7 @@ final class IndicesModel
         foreach ($indexs as $index) {
             $index = preg_split("#\s+#", $index);
             $indexsModel[] = (new IndicesModel())
+                ->setElasticsearchConfig($this->getElasticsearchConfig())
                 ->setIndex($index[2])
                 ->setHealth($index[0])
                 ->setStatus($index[1])

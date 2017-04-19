@@ -8,12 +8,15 @@
 
 namespace xltxlm\elasticsearch\MakeTool;
 
+use xltxlm\helper\Hdir\file_put_contents;
+
 /**
  * 最小单元
  * Class ElasticsearchMakeToolUnit.
  */
 class ElasticsearchMakeToolUnit
 {
+    use file_put_contents;
     /** @var ElasticsearchMakeTool */
     protected $ElasticsearchMakeTool;
 
@@ -155,9 +158,6 @@ class ElasticsearchMakeToolUnit
     public function __invoke()
     {
         $dirname = dirname($this->getFilePath());
-        ob_start();
-        include __DIR__.'/../MakeTool/ElasticsearchMakeToolUnit.Tpl.php';
-        $content = ob_get_clean();
-        file_put_contents($dirname.'/'.$this->getClassShortName().'ElasticsearchQuery.php', $content);
+        $this->file_put_contents($dirname.'/'.$this->getClassShortName().'ElasticsearchQuery.php', __DIR__.'/../MakeTool/ElasticsearchMakeToolUnit.Tpl.php');
     }
 }

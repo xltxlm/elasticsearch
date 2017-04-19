@@ -139,33 +139,33 @@ foreach ($Properties as $property) {
     /**
     * @param string $<?=$property->getName()?>
 
-    * @param string $action
+    * @param string $Elasticsearchaction
     * @return static
     */
-    public function where<?=ucfirst($property->getName())?>($<?=$property->getName()?>,$action=ElasticsearchAction::EQUAL, $explode=" - ")
+    public function where<?=ucfirst($property->getName())?>($<?=$property->getName()?>,$Elasticsearchaction=ElasticsearchAction::EQUAL, $explode=" - ")
     {
         $<?=$property->getName()?>=is_string($<?=$property->getName()?>)?trim($<?=$property->getName()?>):$<?=$property->getName()?>;
         if(empty($<?=$property->getName()?>))
         {
             return $this;
         }
-        if( in_array( $action , [ ElasticsearchAction::EQUAL ,ElasticsearchAction::LIKE ]) )
+        if( in_array( $Elasticsearchaction , [ ElasticsearchAction::EQUAL ,ElasticsearchAction::LIKE ]) )
         {
             $this->__binds['<?=$property->getName()?>'] =
                 [
-                    'action' => $action,
+                    'action' => $Elasticsearchaction,
                     'string' => $<?=$property->getName()?>
                 ];
         }
 
-        if( in_array( $action , [ ElasticsearchAction::MORE ,ElasticsearchAction::LESS, ElasticsearchAction::MOREANDEQUAL, ElasticsearchAction::LESSANDEQUAL ]) )
+        if( in_array( $Elasticsearchaction , [ ElasticsearchAction::MORE ,ElasticsearchAction::LESS, ElasticsearchAction::MOREANDEQUAL, ElasticsearchAction::LESSANDEQUAL ]) )
         {
-            $this->__ranges['<?=$property->getName()?>'] = sprintf('{ "range":{ "<?=$property->getName()?>":{ "%s":"%s" } } }',  $action, $<?=$property->getName()?>);
+            $this->__ranges['<?=$property->getName()?>'] = sprintf('{ "range":{ "<?=$property->getName()?>":{ "%s":"%s" } } }',  $Elasticsearchaction, $<?=$property->getName()?>);
         }
-        if( in_array( $action , [ ElasticsearchAction::IN_EQUAL ,ElasticsearchAction::IN_EQUAL ]) )
+        if( in_array( $Elasticsearchaction , [ ElasticsearchAction::IN_EQUAL ,ElasticsearchAction::IN_EQUAL ]) )
         {
             list($ltval,$gtval)=explode($explode,$<?=$property->getName()?>);
-            list($lt,$gt)=explode("|",$action);
+            list($lt,$gt)=explode("|",$Elasticsearchaction);
             $this->__ranges['<?=$property->getName()?>'] = sprintf('{ "range":{ "<?=$property->getName()?>":{ "%s":"%s","%s":"%s" } } }',  $lt,$ltval,$gt,$gtval);
         }
         return $this;
@@ -173,17 +173,17 @@ foreach ($Properties as $property) {
     /**
     * @param string $<?=$property->getName()?>
 
-    * @param string $action
+    * @param string $Elasticsearchaction
     * @return static
     */
-    public function where<?=ucfirst($property->getName())?>Notin($<?=$property->getName()?>,$action=ElasticsearchAction::EQUAL)
+    public function where<?=ucfirst($property->getName())?>Notin($<?=$property->getName()?>,$Elasticsearchaction=ElasticsearchAction::EQUAL)
     {
         $<?=$property->getName()?>=is_string($<?=$property->getName()?>)?trim($<?=$property->getName()?>):$<?=$property->getName()?>;
         if(empty($<?=$property->getName()?>))
         {
             return $this;
         }
-        if( in_array( $action , [ ElasticsearchAction::EQUAL ]) )
+        if( in_array( $Elasticsearchaction , [ ElasticsearchAction::EQUAL ]) )
         {
             foreach( $<?=$property->getName()?> as $item)
             {
