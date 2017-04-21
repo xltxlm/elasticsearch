@@ -13,8 +13,8 @@ use xltxlm\elasticsearch\Logger\ElasticsearchRunLog;
 use xltxlm\elk\vendor\xltxlm\elasticsearch\src\Unit\EggDayModel;
 use xltxlm\elk\vendor\xltxlm\elasticsearch\src\Unit\EggName2DayModel;
 use xltxlm\elk\vendor\xltxlm\elasticsearch\src\Unit\EggNameModel;
-use xltxlm\helper\Hclass\ChangeTo1Array;
 use xltxlm\helper\Hclass\ConvertObject;
+use xltxlm\helper\Util;
 use xltxlm\page\PageObject;
 
 /**
@@ -39,6 +39,27 @@ class ElasticsearchQuery extends Elasticsearch
     protected $egg = false;
     /** @var bool 是否将结果转换成一维数组 */
     protected $to1Array = false;
+    /** @var bool 是否输出查询信息供调试 */
+    protected $debug = false;
+
+    /**
+     * @return bool
+     */
+    public function isDebug(): bool
+    {
+        return $this->debug;
+    }
+
+    /**
+     * @param bool $debug
+     * @return ElasticsearchQuery
+     */
+    public function setDebug(bool $debug): ElasticsearchQuery
+    {
+        $this->debug = $debug;
+        return $this;
+    }
+
 
     /**
      * @return bool
@@ -179,6 +200,9 @@ class ElasticsearchQuery extends Elasticsearch
         $elasticsearchRunLog = (new ElasticsearchRunLog($this->getElasticsearchConfig()))
             ->setElasticsearchQueryString($index);
 
+        if ($this->isDebug()) {
+            Util::d($index);
+        }
         try {
             $response = $this->getClient()->search($index);
 

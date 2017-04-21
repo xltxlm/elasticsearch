@@ -154,6 +154,7 @@ final class <?=$this->getClassShortName()?>ElasticsearchEgg
             ->setElasticsearchConfig(new <?=(new \ReflectionClass($this->getElasticsearchMakeTool()->getElasticsearchConfig()))->getShortName()?>)
             ->setEgg(true)
             ->setBodyString($bodyString)
+            ->setDebug($this->isDebug())
             ->__invoke();
 
     }
