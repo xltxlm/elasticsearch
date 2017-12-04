@@ -10,7 +10,7 @@ namespace xltxlm\elasticsearch;
 
 use Elasticsearch\Client;
 use Elasticsearch\ClientBuilder;
-use xltxlm\elasticsearch\Logger\ElasticsearchConnectLogger;
+use xltxlm\logger\Operation\Connect\ElasticsearchConnectLog;
 use xltxlm\elasticsearch\Unit\ElasticsearchConfig;
 
 /**
@@ -19,10 +19,10 @@ use xltxlm\elasticsearch\Unit\ElasticsearchConfig;
 abstract class Elasticsearch
 {
 
-    public const DAY='day';
-    public const HOUR='hour';
-    public const MINUTE='minute';
-    public const SECOND='second';
+    public const DAY = 'day';
+    public const HOUR = 'hour';
+    public const MINUTE = 'minute';
+    public const SECOND = 'second';
 
     /** @var ElasticsearchConfig */
     protected $elasticsearchConfig;
@@ -36,19 +36,34 @@ abstract class Elasticsearch
      */
     protected function getClient()
     {
-        $config = [
-            'host' => $this->getElasticsearchConfig()->getHost(),
-            'port' => $this->getElasticsearchConfig()->getPort(),
-            'user' => $this->getElasticsearchConfig()->getUser(),
-            'pass' => $this->getElasticsearchConfig()->getPass(),
-        ];
-        $configSign = md5(json_encode($config));
+        //如果主机配置是数组，那么拆分开
+        if ($this->getElasticsearchConfig()->getHost()[0] == '[') {
+            $hosts = [];
+            foreach (json_decode($this->getElasticsearchConfig()->getHost(), true) as $host) {
+                $hosts[] = [
+                    'scheme' => 'http',
+                    'host' => $host,
+                    'port' => $this->getElasticsearchConfig()->getPort(),
+                    'user' => $this->getElasticsearchConfig()->getUser(),
+                    'pass' => $this->getElasticsearchConfig()->getPass(),
+                ];
+            }
+        } else {
+            $hosts = [[
+                'scheme' => 'http',
+                'host' => $this->getElasticsearchConfig()->getHost(),
+                'port' => $this->getElasticsearchConfig()->getPort(),
+                'user' => $this->getElasticsearchConfig()->getUser(),
+                'pass' => $this->getElasticsearchConfig()->getPass(),
+            ]];
+        }
+        $configSign = md5(json_encode($hosts, JSON_UNESCAPED_UNICODE));
         if (empty(self::$client[$configSign])) {
             self::$client[$configSign] = ClientBuilder::create()
-                ->setHosts([$config])
+                ->setHosts($hosts)
                 ->build();
             //记录日志
-            (new ElasticsearchConnectLogger())
+            (new ElasticsearchConnectLog())
                 ->setElasticsearchConfig($this->getElasticsearchConfig())
                 ->__invoke();
         }

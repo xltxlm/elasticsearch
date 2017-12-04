@@ -8,6 +8,8 @@
 
 namespace xltxlm\elasticsearch;
 
+use xltxlm\helper\Hclass\MergeObject;
+
 /**
  * 获取一行数据
  * Class ElasticsearchGetOne.
@@ -47,16 +49,23 @@ class ElasticsearchGetOne extends Elasticsearch
 
         $index = $this->getElasticsearchConfig()->__invoke() +
             [
-                'body' => '{"query":{ "match_phrase": { "_id":"'.$this->getId().'" }  } }'
+                'body' => '{"query":{ "match_phrase": { "_id":"' . $this->getId() . '" }  } }'
             ];
         $response = $this->getClient()->search($index);
         if ($this->getBodyClass()) {
-            try {
-                return (new \ReflectionClass($this->getBodyClass()))
-                    ->newInstance($response['_source']);
-            } catch (\Exception $e) {
-                return (new \ReflectionClass($this->getBodyClass()))
-                    ->newInstance();
+            $BodyClass = $this->getBodyClass();
+            if ($response['hits']['hits'][0]['_source']) {
+                try {
+                    $BodyClassObject = new $BodyClass;
+                    return (new MergeObject($BodyClassObject))
+                        ->setArray($response['hits']['hits'][0]['_source'])
+                        ->__invoke();
+                } catch (\Exception $e) {
+                    return (new \ReflectionClass($this->getBodyClass()))
+                        ->newInstance();
+                }
+            } else {
+                return [];
             }
         }
         return $response['hits']['hits'][0];

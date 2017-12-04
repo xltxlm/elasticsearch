@@ -8,7 +8,7 @@
 
 namespace xltxlm\elasticsearch;
 
-use xltxlm\elasticsearch\Logger\ElasticsearchRunLog;
+use xltxlm\logger\Operation\Action\ElasticsearchRunLog;
 use xltxlm\page\PageObject;
 
 /**

@@ -9,7 +9,7 @@
 namespace xltxlm\elasticsearch;
 
 use Psr\Log\LogLevel;
-use xltxlm\elasticsearch\Logger\ElasticsearchRunLog;
+use xltxlm\logger\Operation\Action\ElasticsearchRunLog;
 use xltxlm\elk\vendor\xltxlm\elasticsearch\src\Unit\EggDayModel;
 use xltxlm\elk\vendor\xltxlm\elasticsearch\src\Unit\EggName2DayModel;
 use xltxlm\elk\vendor\xltxlm\elasticsearch\src\Unit\EggNameModel;
@@ -213,6 +213,7 @@ class ElasticsearchQuery extends Elasticsearch
                 return $this->monal($response);
             }
         } catch (\Exception $e) {
+            Util::d($e->getMessage());
             $elasticsearchRunLog
                 ->setMessageDescribe($e->getMessage())
                 ->setType(LogLevel::ERROR);

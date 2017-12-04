@@ -1,3 +1,6 @@
 /vendor/
 .idea
 /elasticsearch
+.php_cs.cache
+composer.lock
+php_errors.log
