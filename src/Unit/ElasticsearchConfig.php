@@ -9,6 +9,7 @@
 namespace xltxlm\elasticsearch\Unit;
 
 use xltxlm\config\TestConfig;
+use xltxlm\elasticsearch\ElasticsearchClient;
 use xltxlm\elasticsearch\ElasticsearchQuery;
 use xltxlm\helper\Hclass\ObjectToJson;
 use xltxlm\page\PageObject;
@@ -180,19 +181,20 @@ abstract class ElasticsearchConfig implements TestConfig
     /**
      * 测试服务是否正常.
      *
-     * @return array
+     * @return bool
      */
     public function test()
     {
-        $pageObject = new PageObject();
+        $elasticsearchConfig = new static();
+        $ping = (new ElasticsearchClient())
+            ->setElasticsearchConfig($elasticsearchConfig)
+            ->getClient()
+            ->ping();
 
-        $eggNameModels = (new ElasticsearchQuery())
-            ->setElasticsearchConfig(new static())
-            ->setClassName(\stdClass::class)
-            ->setPageObject($pageObject)
-            ->setBodyString('')
-            ->__invoke();
-        return $eggNameModels;
+        if (!$ping) {
+            throw new \Exception("链接Es服务器失败:" . json_encode(get_object_vars($elasticsearchConfig)));
+        }
+        return $ping;
     }
 
     /**

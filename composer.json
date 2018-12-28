@@ -16,7 +16,7 @@
     "xltxlm/page": "*",
     "xltxlm/config": "*",
     "xltxlm/guzzlehttp": "*",
-    "elasticsearch/elasticsearch": "~v5."
+    "elasticsearch/elasticsearch": "~v6."
   },
   "autoload": {
     "psr-4": {

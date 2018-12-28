@@ -34,7 +34,7 @@ abstract class Elasticsearch
     /**
      * @return Client
      */
-    protected function getClient()
+    public function getClient()
     {
         //如果主机配置是数组，那么拆分开
         if ($this->getElasticsearchConfig()->getHost()[0] == '[') {
@@ -57,7 +57,8 @@ abstract class Elasticsearch
                 'pass' => $this->getElasticsearchConfig()->getPass(),
             ]];
         }
-        $configSign = md5(json_encode($hosts, JSON_UNESCAPED_UNICODE));
+        //新开进程的话，进行新的链接回话
+        $configSign = md5(json_encode($hosts, JSON_UNESCAPED_UNICODE)).posix_getpid();
         if (empty(self::$client[$configSign])) {
             self::$client[$configSign] = ClientBuilder::create()
                 ->setHosts($hosts)

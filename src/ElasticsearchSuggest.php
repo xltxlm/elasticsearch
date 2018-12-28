@@ -12,7 +12,7 @@ use xltxlm\logger\Operation\Action\ElasticsearchRunLog;
 use xltxlm\page\PageObject;
 
 /**
- * 完全自定义查询
+ * 建议查询，根据提供的字符串，查询后续现实的单词
  * Class ElasticsearchQuery.
  */
 class ElasticsearchSuggest extends Elasticsearch

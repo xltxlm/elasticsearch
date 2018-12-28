@@ -9,12 +9,12 @@
 namespace xltxlm\elasticsearch;
 
 use Psr\Log\LogLevel;
-use xltxlm\logger\Operation\Action\ElasticsearchRunLog;
 use xltxlm\elk\vendor\xltxlm\elasticsearch\src\Unit\EggDayModel;
 use xltxlm\elk\vendor\xltxlm\elasticsearch\src\Unit\EggName2DayModel;
 use xltxlm\elk\vendor\xltxlm\elasticsearch\src\Unit\EggNameModel;
 use xltxlm\helper\Hclass\ConvertObject;
 use xltxlm\helper\Util;
+use xltxlm\logger\Operation\Action\ElasticsearchRunLog;
 use xltxlm\page\PageObject;
 
 /**
@@ -35,8 +35,8 @@ class ElasticsearchQuery extends Elasticsearch
     protected $className = \stdClass::class;
     /** @var PageObject 分页 */
     protected $pageObject;
-    /** @var bool 是否是统计分析数据 */
-    protected $egg = false;
+    /** @var int 是否是统计分析数据 */
+    protected $egg = 0;
     /** @var bool 是否将结果转换成一维数组 */
     protected $to1Array = false;
     /** @var bool 是否输出查询信息供调试 */
@@ -80,18 +80,18 @@ class ElasticsearchQuery extends Elasticsearch
     }
 
     /**
-     * @return bool
+     * @return int
      */
-    public function isEgg(): bool
+    public function getEgg(): int
     {
         return $this->egg;
     }
 
     /**
-     * @param bool $egg
+     * @param int $egg
      * @return ElasticsearchQuery
      */
-    public function setEgg(bool $egg): ElasticsearchQuery
+    public function setEgg(int $egg): ElasticsearchQuery
     {
         $this->egg = $egg;
         return $this;
@@ -201,22 +201,43 @@ class ElasticsearchQuery extends Elasticsearch
             ->setElasticsearchQueryString($index);
 
         if ($this->isDebug()) {
-            Util::d($index);
+            Util::d([$index]);
         }
         try {
             $response = $this->getClient()->search($index);
+            if ($this->pageObject) {
+                //获取原来的最大分页数目
+                $from = $this->getPageObject()->getFrom();
 
-            if ($this->isEgg()) {
-                $this->egg($response);
-                return $this->getEggNameModels();
+                $this->pageObject
+                    ->setTotal($response['hits']['total'])
+                    ->__invoke();
+                if ($from > $this->pageObject->getFrom()) {
+                    //分页的位置超出范围了，再查一次
+                    $index = array_merge($index, [
+                        'from' => $this->getPageObject()->getFrom(),
+                        'size' => $this->getPageObject()->getPrepage(),
+                    ]);
+                    if ($this->isDebug()) {
+                        Util::d($index);
+                    }
+                    $response = $this->getClient()->search($index);
+                    $this->pageObject
+                        ->setTotal($response['hits']['total'])
+                        ->__invoke();
+                }
+            }
+            if ($this->getEgg()) {
+                return $this->egg($response);
             } else {
                 return $this->monal($response);
             }
         } catch (\Exception $e) {
-            Util::d($e->getMessage());
+            Util::d([$e->getMessage(), $this->getElasticsearchConfig()]);
             $elasticsearchRunLog
                 ->setMessageDescribe($e->getMessage())
                 ->setType(LogLevel::ERROR);
+            throw $e;
         } finally {
             $elasticsearchRunLog
                 ->__invoke();
@@ -226,25 +247,46 @@ class ElasticsearchQuery extends Elasticsearch
 
     private function egg($response)
     {
-        $buckets = $response['aggregations']['all_interests']['buckets'];
-        foreach ($buckets as $item) {
-            $name = $item['key'];
-            $this->eggNameModels[] = (new EggNameModel)
-                ->setName($name);
 
-            foreach ($item['daysbuckets']['buckets'] as $daysbucket) {
-                $day = $daysbucket['key_as_string'];
-                $this->eggDayModels[$day] = $this->eggDayModels[$day]??(new EggDayModel)
-                        ->setDay($day);
-
-                $this->EggName2DayModels[$name.$day] = (new EggName2DayModel())
-                    ->setName($name)
-                    ->setDay($day)
-                    ->setNum($daysbucket['doc_count']);
+        if ($this->getEgg() == 1) {
+            $meta = current($response['aggregations'])['meta']['field'];
+            $buckets = current($response['aggregations'])['buckets'];
+            $return = [];
+            foreach ($buckets as $bucket) {
+                $return[] = [
+                    $meta => $bucket['key_as_string'] ?: $bucket['key'],
+                    '_num' => strval(isset($bucket['doc_count']['value']) ?$bucket['doc_count']['value']:$bucket['doc_count'])
+                ];
             }
+            return $return;
+        } elseif ($this->getEgg() == 2) {
+            $meta = current($response['aggregations'])['meta']['field'];
+            $buckets = current($response['aggregations'])['buckets'];
+            $return = [];
+            foreach ($buckets as $bucket) {
+
+                $meta2 = $bucket['groupby_2']['meta']['field'];
+                $bucket2s = $bucket['groupby_2']['buckets'];
+
+                foreach ($bucket2s as $bucket2) {
+                    $return[] = [
+                        $meta => $bucket['key_as_string'] ?: $bucket['key'],
+                        $meta2 => $bucket2['key_as_string'] ?: $bucket2['key'],
+                        '_num' => strval(isset($bucket2['doc_count']['value']) ?$bucket2['doc_count']['value']:$bucket2['doc_count'])
+                    ];
+                }
+            }
+
+            return $return;
+        } elseif ($this->getEgg() == 100) {
+            //没有任何分组条件,只是纯粹的计数而已
+            $return = [];
+            $return[] =
+                [
+                    '_num' => $response['hits']['total']
+                ];
+            return $return;
         }
-        //日期进行排序整理
-        krsort($this->eggDayModels);
     }
 
     /**
@@ -294,8 +336,7 @@ class ElasticsearchQuery extends Elasticsearch
                 $BodyObjects[] = $newInstance;
             }
         }
-        $this->pageObject->setTotal($response['hits']['total'])
-            ->__invoke();
+
         if ($this->isTo1Array()) {
             foreach ($BodyObjects as &$bodyObject) {
                 if ($this->getClassName() != \stdClass::class) {
