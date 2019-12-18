@@ -7,10 +7,11 @@
       "email": "xltxlm@qq.com"
     }
   ],
+  "minimum-stability": "dev",
   "require": {
     "php": ">=7.0",
     "ext-mbstring": "*",
-    "xltxlm/str": "dev-master",
+    "xltxlm/str": "@dev",
     "xltxlm/logger": "*",
     "xltxlm/helper": "*",
     "xltxlm/page": "*",
