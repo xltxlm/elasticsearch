@@ -10,7 +10,7 @@
   "require": {
     "php": ">=7.0",
     "ext-mbstring": "*",
-    "overtrue/pinyin": "~3.0",
+    "xltxlm/str": "dev-master",
     "xltxlm/logger": "*",
     "xltxlm/helper": "*",
     "xltxlm/page": "*",
